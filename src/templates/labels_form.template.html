@@ -1,13 +1,9 @@
-
-        <div class="">
-
-            <% _.each(labels, function(l, i) { %>
-
-                <form class="edit-label-form form-inline" role="form" data-key="<%= l.key %>">
-
+<div id="labels_form_template">
+    <div class="labels-container" data-position="<%= position %>">
+        <% _.each(labels, function(l, i) { %>
+            <form class="edit-label-form form-inline" role="form" data-key="<%= l.key %>">
                     <%= inner_template({l:l, position:position, position_icon_cls, edit:true}) %>
-
-                </form>
-
-            <% }); %>
-        </div>
+            </form>
+        <% }); %>
+    </div>
+</div>

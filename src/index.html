@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>OMERO.figure</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
     <script>
       // For dev, use this server to load/save figures (needs CORS enabled)
@@ -168,7 +169,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" style="float: left; padding-right: 20px">
-              Edit ROIs
+              Edit ROIs hello again
             </h5>
             <p style="margin: 4px 0 0 0">
               Draw & edit ROIs and load ROIs from OMERO
@@ -876,13 +877,13 @@
             <h4>Markdown formatting</h4>
             <p>
               You can use "Markdown" syntax to add formatting to plain text. For
-              example, **this text will be bold** and this *word* will be italic. 
+              example, **this text will be bold** and this *word* will be italic.
             </p>
             <p>
                 NB: Links are not supported for panel labels.
             </p>
             <p>
-                NB: You can escape a certain character to not be interpreted as Markdown by adding \ in front of the 
+                NB: You can escape a certain character to not be interpreted as Markdown by adding \ in front of the
                 character. Ex: "my_string_" is interpreted as "my<i>string</i>" but "my\_string\_" is now interpreted as "my_string_"
             </p>
 
@@ -1155,7 +1156,7 @@
           </div>
           <form class="labelsFromMapAnnsForm" role="form">
             <div class="modal-body">
-              <div>                                                    
+              <div>
                 <input type="radio" id="all-keys" name="kvpChoice" value="all-keys" />
                 <label for="all-keys">All Keys </label>
 
@@ -1823,7 +1824,7 @@
             <div class="row">
               <div class="col-2 no-padding" id="channelToggle"></div>
               <div class="col-10 no-padding" id="viewportContainer">
-                
+
               </div>
             </div>
             <div class="clearfix" style="padding-bottom: 13px"></div>
@@ -1878,14 +1879,12 @@
             </button>
             <div class="clearfix"></div>
             <form class="new-label-form form-inline" role="form"></form>
-
-            <h5 style="margin-top: 15px">Edit Labels</h5>
-            <div id="selected_panels_labels"></div>
+            <h5 style="margin-top: 15px">Edit Labels </h5>
+            <div id="selected_panels_labels" class="labels-container"></div>
           </div>
         </div>
       </div>
     </div>
-
     <script type="module" src="./js/main.js"></script>
   </body>
 </html>

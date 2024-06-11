@@ -293,55 +293,502 @@
         "right": "bi-box-arrow-right",
         "rightvert": "bi-box-arrow-right",
         "bottom": "bi-box-arrow-down"
-    }
+    };
 
+    // var LabelsPanelView = Backbone.View.extend({
+
+    //     model: FigureModel,
+
+    //     template: _.template(labels_form_inner_template),
+
+    //     el: $("#labelsTab"),
+
+    //     initialize: function(opts) {
+    //         this.listenTo(this.model, 'change:selection', this.render);
+
+    //         // one-off build 'New Label' form, with same template as used for 'Edit Label' forms
+    //         var json = {'l': {'text':'', 'size':12, 'color':'000000'}, 'position':'top',
+    //             'edit':false, 'position_icon_cls': LABEL_POSITION_ICONS['top']};
+    //         $('.new-label-form', this.$el).html(this.template(json));
+    //         // $('.btn-sm').tooltip({container: 'body', placement:'bottom', toggle:"tooltip"});
+
+    //         this.render();
+    //     },
+
+    //     events: {
+    //         "submit .new-label-form": "handle_new_label",
+    //         "click .dropdown-menu a": "select_dropdown_option",
+    //         "click .markdown-info": "markdownInfo",
+    //     },
+
+    //     markdownInfo: function(event) {
+    //         event.preventDefault();
+    //         showModal("markdownInfoModal");
+    //     },
+
+    //     // Handles all the various drop-down menus in the 'New' AND 'Edit Label' forms
+    //     // AND for ROI form (since this is also under the #labelsTab)
+    //     select_dropdown_option: function(event) {
+    //         event.preventDefault();
+    //         var $a = $(event.target),
+    //             $target = $a.children('.dropdown_icon');
+    //         // For the Label Text, handle this differently...
+    //         if ($a.attr('data-label')) {
+    //             $('.new-label-form .label-text', this.$el).val( $a.attr('data-label') );
+    //             return;
+    //         }
+    //         // All others, we take the .dropdown_icon from the <a> and place it in the <button>
+    //         if ($target.length === 0) $target = $a;  // in case we clicked on icon itself
+    //         var $li = $target.closest("li");
+    //         // Don't use $li.parent().prev() since bootstrap inserts a div.dropdown-backdrop on Windows
+    //         var $button = $("button.dropdown-toggle", $li.parent().parent());
+    //         $target = $target.clone();
+
+    //         if ($target.hasClass('colorpickerOption')) {
+    //             var oldcolor = $a.attr('data-oldcolor');
+    //             FigureColorPicker.show({
+    //                 'color': oldcolor,
+    //                 'success': function(newColor){
+    //                     $target.css({'background-color': newColor, 'background-image': 'none'});
+    //                     // remove # from E.g. #ff00ff
+    //                     newColor = newColor.replace("#", "");
+    //                     $target.attr('data-color', newColor);
+    //                     $('span:first', $button).replaceWith($target);
+    //                     // can listen for this if we want to 'submit' etc
+    //                     $button.trigger('change');
+    //                 }
+    //             });
+    //         } else {
+    //             $('.dropdown_icon', $button).replaceWith($target);
+    //             $button.trigger('change');      // can listen for this if we want to 'submit' etc
+    //         }
+    //     },
+
+    //     // submission of the New Label form
+    //     handle_new_label: function(event) {
+    //         event.preventDefault();
+    //         var $form = $(event.target),
+    //             label_text = $('.label-text', $form).val(),
+    //             font_size = $('.font-size', $form).text().trim(),
+    //             position = $('.label-position i:first', $form).attr('data-position'),
+    //             color = $('.label-color span:first', $form).attr('data-color');
+
+    //         if (label_text.length === 0) {
+    //             alert("Please enter some text for the label");
+    //             return false;
+    //         }
+
+    //         var selected = this.model.getSelected();
+
+    //         if (label_text == '[channels labels]') {
+    //             selected.forEach(function(m) {
+    //                 m.create_labels_from_channels({position:position, size:font_size});
+    //             });
+    //             return false;
+    //         }
+
+    //         if (label_text == '[key-values]') {
+    //             // Load Map Annotations for this image and create labels
+    //             showModal("labelsFromMapAnns", {
+    //                 position: position,
+    //                 size: font_size,
+    //                 color: color});
+    //             return false;
+    //         }
+
+    //         if (label_text == '[tags]') {
+    //             // Load Tags for this image and create labels
+
+    //             selected.createLabelsFromTags({
+    //                         position:position,
+    //                         size:font_size,
+    //                         color: color});
+    //             return false;
+    //         }
+
+    //         var label = {
+    //             text: label_text,
+    //             size: parseInt(font_size, 10),
+    //             position: position,
+    //             color: color
+    //         };
+
+    //         selected.forEach(function(m) {
+    //             m.add_labels([label]);
+    //         });
+    //         return false;
+    //     },
+
+    //     render: function() {
+
+    //         var selected = this.model.getSelected();
+
+    //         // html is already in place for 'New Label' form - simply show/hide
+    //         if (selected.length === 0) {
+    //             $(".new-label-form", this.$el).hide();
+    //         } else {
+    //             $(".new-label-form", this.$el).show();
+    //             // if none of the selected panels have time data, disable 'add_time_label's
+    //             var have_time = false, dTs;
+    //             selected.forEach(function(p){
+    //                 dTs = p.get('deltaT');
+    //                 if (dTs && dTs.length > 0) {
+    //                     have_time = true;
+    //                 }
+    //             });
+    //             if (have_time) {
+    //                 $(".add_time_label", this.$el).removeClass('disabled');
+    //             } else {
+    //                 $(".add_time_label", this.$el).addClass('disabled');
+    //             }
+    //         }
+
+    //         // show selected panels labels below
+    //         var old = this.sel_labels_panel;
+
+    //         if (selected.length > 0) {
+    //             this.sel_labels_panel = new SelectedPanelsLabelsView({models: selected});
+    //             this.sel_labels_panel.render();
+    //             $("#selected_panels_labels").empty().append(this.sel_labels_panel.$el);
+    //         }
+    //         if (old) {
+    //             old.remove();
+    //         }
+
+    //         // show scalebar form for selected panels
+    //         var old_sb = this.scalebar_form;
+    //         // if (old_sb) {
+    //         //     old_sb.remove();
+    //         // }
+    //         var $scalebar_form = $("#scalebar_form");
+
+    //         if (selected.length > 0) {
+    //             this.scalebar_form = new ScalebarFormView({models: selected});
+    //             this.scalebar_form.render();
+    //             $scalebar_form.empty().append(this.scalebar_form.$el);
+    //         }
+    //         if (old_sb) {
+    //             old_sb.remove();
+    //         }
+
+    //         return this;
+    //     }
+
+    // });
+
+    // // Created new for each selection change
+    // var SelectedPanelsLabelsView = Backbone.View.extend({
+
+    //     template: _.template(labels_form_template),
+    //     inner_template: _.template(labels_form_inner_template),
+
+    //     initialize: function(opts) {
+
+    //         // prevent rapid repetative rendering, when listening to multiple panels
+    //         this.render = _.debounce(this.render);
+    //         this.models = opts.models;
+    //         var self = this;
+
+    //         this.models.forEach(function(m){
+    //             self.listenTo(m, 'change:labels change:theT', self.render);
+    //         });
+    //         this.labelOrder = {};
+    //         // this.render();
+    //     },
+
+    //     events: {
+    //         "submit .edit-label-form": "handle_label_edit",
+    //         "change .btn": "form_field_changed",
+    //         "blur .label-text": "form_field_changed",
+    //         "click .delete-label": "handle_label_delete",
+    //     },
+
+    //     initializeSortable: function(){
+    //         var self = this;
+    //         var el = this.$el.find('.labels-container').get(0);
+    //         alert(el);
+
+    //          // Check if the element exists
+    //         if (!el) {
+    //             console.warn('Sortable element not found.');
+    //             return;
+    //         }
+
+    //         // Destroy existing Sortable instance if any
+    //         if (this.sortable) {
+    //             this.sortable.destroy();
+    //             this.sortable = null;
+    //         }
+    //         // Initialize Sortable
+    //         this.sortable = new Sortable(el, {
+    //             animation: 150,
+    //             // fallbackOnBody: true, // Enable dragging elements outside the container
+    //             setData: function(dataTransfer, dragEl) {
+    //                 // Set the data to be transferred during drag
+    //                 dataTransfer.setData('text', dragEl.textContent);
+    //             },
+    //             onMove: function(evt) {
+    //                 // alert("Outside");
+    //                 // Allow dragging outside the container
+    //                 return evt.related === null || evt.related !== evt.from;
+    //             },
+    //             onEnd: function(evt) {
+    //                 if (!evt.to || evt.to !== evt.from) {
+    //                     // If the element is dropped outside the container, revert it back to the original position
+    //                     self.restoreState();
+    //                 } else {
+    //                     self.handleSort(evt);
+    //                 }
+    //             }
+    //         });
+    //         console.log('Sortable initialized.');
+    //     },
+
+    //     handle_label_delete: function(event) {
+
+    //         var $form = $(event.target).parent(),
+    //             key = $form.attr('data-key'),
+    //             deleteMap = {};
+
+    //         // escape the key to handle 'single' and "double" quotes
+    //         key = _.escape(key);
+    //         deleteMap[key] = false;
+
+    //         this.models.forEach(function(m){
+    //             m.edit_labels(deleteMap);
+    //         });
+    //         // this.render();
+    //         this.initializeSortable();
+    //         return false;
+    //     },
+
+    //     // Automatically submit the form when a field is changed
+    //     form_field_changed: function(event) {
+    //         $(event.target).closest('form').submit();
+    //     },
+
+    //     // Use the label 'key' to specify which labels to update
+    //     handle_label_edit: function(event) {
+
+    //         var $form = $(event.target),
+    //             label_text = $('.label-text', $form).val(),
+    //             font_size = $('.font-size', $form).text().trim(),
+    //             position = $('.label-position i:first', $form).attr('data-position'),
+    //             color = $('.label-color span:first', $form).attr('data-color'),
+    //             key = $form.attr('data-key');
+
+    //         // the 'key' will now be unescaped, so we need to escape it again to compare with model
+    //         key = _.escape(key);
+    //         var new_label = {text:label_text, size:font_size, position:position, color:color};
+
+    //         var newlbls = {};
+    //         newlbls[key] = new_label;
+
+    //         this.models.forEach(function(m){
+    //             m.edit_labels(newlbls);
+    //         });
+
+    //         this.render();
+    //         return false;
+    //     },
+
+    //     captureState: function() {
+    //         var self = this;
+    //         this.models.forEach(function(model) {
+    //             var labels = model.get('labels');
+    //             var order = labels.map(label => model.get_label_key(label));
+    //             self.labelOrder[model.cid] = order;
+    //         });
+    //     },
+
+    //     restoreState: function() {
+    //         var self = this;
+    //         this.models.forEach(function(model) {
+    //             var labels = model.get('labels');
+    //             var order = self.labelOrder[model.cid];
+    //             if (order) {
+    //                 var reorderedLabels = order.map(key => labels.find(label => model.get_label_key(label) === key));
+    //                 model.set('labels', reorderedLabels);
+    //             }
+    //         });
+    //     },
+
+    //     handleSort: function(evt) {
+
+    //         var container = this.$el.find('.labels-container').get(0);
+    //         var forms = container.querySelectorAll('.edit-label-form');
+
+    //         // Extract label keys in the new order
+    //         var reorderedKeys = Array.from(forms).map(form => form.getAttribute('data-key'));
+
+    //         // Update the order of labels in each panel
+    //         this.models.forEach(function(panelModel) {
+    //             var labels = panelModel.get('labels');
+    //             var reorderedLabels = reorderedKeys.map(key => labels.find(label => panelModel.get_label_key(label) === key));
+    //             panelModel.set('labels', reorderedLabels);
+    //         });
+
+    //         // Save the FigureModel instance
+    //         // this.saveFigureModel();
+    //         this.labelOrder = reorderedKeys;
+    //     },
+
+    //     render: function() {
+    //         this.captureState();
+    //         var self = this,
+    //             positions = {'top':{}, 'bottom':{}, 'left':{}, 'leftvert':{}, 'right':{},'rightvert':{},
+    //                 'topleft':{}, 'topright':{}, 'bottomleft':{}, 'bottomright':{}};
+    //         this.models.forEach(function(m){
+    //             // group labels by position
+    //             _.each(m.get('labels'), function(l) {
+    //                 // remove duplicates by mapping to unique key
+    //                 var key = m.get_label_key(l),
+    //                     ljson = $.extend(true, {}, l);
+    //                     ljson.key = key;
+    //                 positions[l.position][key] = ljson;
+    //             });
+    //         });
+
+    //         this.$el.empty();
+
+    //         // Render template for each position and append to $el
+    //         var html = "";
+    //         _.each(positions, function(lbls, p) {
+
+    //             let position_icon_cls = LABEL_POSITION_ICONS[p];
+    //             lbls = _.map(lbls, function(label, key){
+    //                 return {...label, position_icon_cls};
+    //             });
+
+    //             var json = {'position':p, 'labels':lbls, 'position_icon_cls': position_icon_cls};
+    //             if (lbls.length === 0) return;
+    //             json.inner_template = self.inner_template;
+    //             html += self.template(json);
+    //         });
+    //         self.$el.append(html);
+    //         this.initializeSortable();
+    //         this.restoreState();
+
+    //         return this;
+    //     }
+    // });
 
     var LabelsPanelView = Backbone.View.extend({
 
-        model: FigureModel,
+        model: FigureModel,
 
-        template: _.template(labels_form_inner_template),
+        template: _.template(labels_form_inner_template),
 
-        el: $("#labelsTab"),
-
+        el: $("#labelsTab"),
         initialize: function(opts) {
             this.listenTo(this.model, 'change:selection', this.render);
-
-            // one-off build 'New Label' form, with same template as used for 'Edit Label' forms
-            var json = {'l': {'text':'', 'size':12, 'color':'000000'}, 'position':'top',
-                'edit':false, 'position_icon_cls': LABEL_POSITION_ICONS['top']};
+            var json = {'l': {'text':'', 'size':12, 'color':'000000'}, 'position':'top', 'edit':false, 'position_icon_cls': LABEL_POSITION_ICONS['top']};
             $('.new-label-form', this.$el).html(this.template(json));
-            // $('.btn-sm').tooltip({container: 'body', placement:'bottom', toggle:"tooltip"});
-
             this.render();
+
+            // Bind the correct context
+            this.select_dropdown_option = this.select_dropdown_option.bind(this);
         },
 
-        events: {
-            "submit .new-label-form": "handle_new_label",
-            "click .dropdown-menu a": "select_dropdown_option",
-            "click .markdown-info": "markdownInfo",
-        },
 
-        markdownInfo: function(event) {
-            event.preventDefault();
-            showModal("markdownInfoModal");
-        },
+//         initialize: function(opts) {
+//             this.listenTo(this.model, 'change:selection', this.render);
 
-        // Handles all the various drop-down menus in the 'New' AND 'Edit Label' forms
-        // AND for ROI form (since this is also under the #labelsTab)
+//             // one-off build 'New Label' form, with same template as used for 'Edit Label' forms
+//             var json = {'l': {'text':'', 'size':12, 'color':'000000'}, 'position':'top',
+//                 'edit':false, 'position_icon_cls': LABEL_POSITION_ICONS['top']};
+//             $('.new-label-form', this.$el).html(this.template(json));
+//             // $('.btn-sm').tooltip({container: 'body', placement:'bottom', toggle:"tooltip"});
+
+//             this.render();
+//         },
+
+        events: {
+            "submit .new-label-form": "handle_new_label",
+            "click .dropdown-menu a": "select_dropdown_option",
+            "click .markdown-info": "markdownInfo",
+        },
+
+        markdownInfo: function(event) {
+            event.preventDefault();
+            showModal("markdownInfoModal");
+        },
+
+        // Handles all the various drop-down menus in the 'New' AND 'Edit Label' forms
+        // AND for ROI form (since this is also under the #labelsTab)
+//         select_dropdown_option: function(event) {
+//             console.log("Dropdown option selected");
+//             // event.preventDefault();
+//             // var $a = $(event.target);
+//             // var $target = $a.children('.dropdown_icon');
+//             // if ($target.length === 0) $target = $a;
+
+//             // var $button = $a.closest('.btn-group').find('button.dropdown-toggle');
+//             // $target = $target.clone();
+//             event.preventDefault();
+//             var $a = $(event.target),
+//                 $target = $a.children('.dropdown_icon');
+//             // For the Label Text, handle this differently...
+// //             if ($a.attr('data-label')) {
+// //                 $('.new-label-form .label-text', this.$el).val( $a.attr('data-label') );
+// //                 return;
+// //             }
+//             // All others, we take the .dropdown_icon from the <a> and place it in the <button>
+//             if ($target.length === 0) $target = $a;  // in case we clicked on icon itself
+//             var $li = $target.closest("li");
+//             // Don't use $li.parent().prev() since bootstrap inserts a div.dropdown-backdrop on Windows
+//             var $button = $("button.dropdown-toggle", $li.parent().parent());
+//             $target = $target.clone();
+
+//              // Check if the dropdown option is for position
+//             // if ($target.hasClass('label-position')) {
+//             //     // Update the position attribute of the label text
+//             //     $('.new-label-form .label-text', this.$el).attr('data-position', $a.attr('data-position'));
+//             // }
+
+//             if ($target.hasClass('colorpickerOption')) {
+//                 var oldcolor = $a.attr('data-oldcolor');
+//                 FigureColorPicker.show({
+//                     'color': oldcolor,
+//                     'success': function(newColor){
+//                         $target.css({'background-color': newColor, 'background-image': 'none'});
+//                         // remove # from E.g. #ff00ff
+//                         newColor = newColor.replace("#", "");
+//                         $target.attr('data-color', newColor);
+//                         $('span:first', $button).replaceWith($target);
+//                         // can listen for this if we want to 'submit' etc
+//                         $button.trigger('change');
+//                     }
+//                 });
+//             } else {
+//                 $('.dropdown_icon', $button).replaceWith($target);
+//                 $button.trigger('change');      // can listen for this if we want to 'submit' etc
+//             }
+
+//             // Update the label's position in the model
+//             var key = $button.closest('form').data('key');
+//             var new_position = $target.attr('data-position');
+//             this.models.forEach(function(m) {
+//                 var labels = m.get('labels');
+//                 labels.forEach(function(label) {
+//                     if (m.get_label_key(label) === key) {
+//                         label.position = new_position;
+//                     }
+//                 });
+//                 m.set('labels', labels);
+//             });
+//             this.render();
+//         },
         select_dropdown_option: function(event) {
             event.preventDefault();
             var $a = $(event.target),
                 $target = $a.children('.dropdown_icon');
-            // For the Label Text, handle this differently...
             if ($a.attr('data-label')) {
-                $('.new-label-form .label-text', this.$el).val( $a.attr('data-label') );
+                $('.new-label-form .label-text', this.$el).val($a.attr('data-label'));
                 return;
             }
-            // All others, we take the .dropdown_icon from the <a> and place it in the <button>
-            if ($target.length === 0) $target = $a;  // in case we clicked on icon itself
+            if ($target.length === 0) $target = $a;
             var $li = $target.closest("li");
-            // Don't use $li.parent().prev() since bootstrap inserts a div.dropdown-backdrop on Windows
             var $button = $("button.dropdown-toggle", $li.parent().parent());
             $target = $target.clone();
 
@@ -349,152 +796,160 @@
                 var oldcolor = $a.attr('data-oldcolor');
                 FigureColorPicker.show({
                     'color': oldcolor,
-                    'success': function(newColor){
+                    'success': (newColor) => {
                         $target.css({'background-color': newColor, 'background-image': 'none'});
-                        // remove # from E.g. #ff00ff
                         newColor = newColor.replace("#", "");
                         $target.attr('data-color', newColor);
                         $('span:first', $button).replaceWith($target);
-                        // can listen for this if we want to 'submit' etc
                         $button.trigger('change');
                     }
                 });
             } else {
                 $('.dropdown_icon', $button).replaceWith($target);
-                $button.trigger('change');      // can listen for this if we want to 'submit' etc
-            }
-        },
-
-        // submission of the New Label form
-        handle_new_label: function(event) {
-            event.preventDefault();
-            var $form = $(event.target),
-                label_text = $('.label-text', $form).val(),
-                font_size = $('.font-size', $form).text().trim(),
-                position = $('.label-position i:first', $form).attr('data-position'),
-                color = $('.label-color span:first', $form).attr('data-color');
-
-            if (label_text.length === 0) {
-                alert("Please enter some text for the label");
-                return false;
+                $button.trigger('change');
             }
 
-            var selected = this.model.getSelected();
-
-            if (label_text == '[channels labels]') {
-                selected.forEach(function(m) {
-                    m.create_labels_from_channels({position:position, size:font_size});
-                });
-                return false;
-            }
-
-            if (label_text == '[key-values]') {
-                // Load Map Annotations for this image and create labels
-                showModal("labelsFromMapAnns", {
-                    position: position,
-                    size: font_size,
-                    color: color});
-                return false;
-            }
-
-            if (label_text == '[tags]') {
-                // Load Tags for this image and create labels
-
-                selected.createLabelsFromTags({
-                            position:position,
-                            size:font_size,
-                            color: color});
-                return false;
-            }
-
-            var label = {
-                text: label_text,
-                size: parseInt(font_size, 10),
-                position: position,
-                color: color
-            };
-
-            selected.forEach(function(m) {
-                m.add_labels([label]);
-            });
-            return false;
-        },
-
-        render: function() {
-
-            var selected = this.model.getSelected();
-
-            // html is already in place for 'New Label' form - simply show/hide
-            if (selected.length === 0) {
-                $(".new-label-form", this.$el).hide();
-            } else {
-                $(".new-label-form", this.$el).show();
-                // if none of the selected panels have time data, disable 'add_time_label's
-                var have_time = false, dTs;
-                selected.forEach(function(p){
-                    dTs = p.get('deltaT');
-                    if (dTs && dTs.length > 0) {
-                        have_time = true;
+            var key = $button.closest('form').data('key');
+            var new_position = $target.attr('data-position');
+            this.models.forEach((m) => {
+                var labels = m.get('labels');
+                labels.forEach((label) => {
+                    if (m.get_label_key(label) === key) {
+                        label.position = new_position;
                     }
                 });
-                if (have_time) {
-                    $(".add_time_label", this.$el).removeClass('disabled');
-                } else {
-                    $(".add_time_label", this.$el).addClass('disabled');
-                }
-            }
-
-            // show selected panels labels below
-            var old = this.sel_labels_panel;
-
-            if (selected.length > 0) {
-                this.sel_labels_panel = new SelectedPanelsLabelsView({models: selected});
-                this.sel_labels_panel.render();
-                $("#selected_panels_labels").empty().append(this.sel_labels_panel.$el);
-            }
-            if (old) {
-                old.remove();
-            }
-
-            // show scalebar form for selected panels
-            var old_sb = this.scalebar_form;
-            // if (old_sb) {
-            //     old_sb.remove();
-            // }
-            var $scalebar_form = $("#scalebar_form");
-
-            if (selected.length > 0) {
-                this.scalebar_form = new ScalebarFormView({models: selected});
-                this.scalebar_form.render();
-                $scalebar_form.empty().append(this.scalebar_form.$el);
-            }
-            if (old_sb) {
-                old_sb.remove();
-            }
-
-            return this;
-        }
-
-    });
+                m.set('labels', labels);
+            });
+            this.render();
+        },
 
 
-    // Created new for each selection change
+        // submission of the New Label form
+        handle_new_label: function(event) {
+            event.preventDefault();
+            var $form = $(event.target),
+                label_text = $('.label-text', $form).val(),
+                font_size = $('.font-size', $form).text().trim(),
+                position = $('.label-position i:first', $form).attr('data-position'),
+                color = $('.label-color span:first', $form).attr('data-color');
+
+            if (label_text.length === 0) {
+                alert("Please enter some text for the label");
+                return false;
+            }
+
+            var selected = this.model.getSelected();
+
+            if (label_text == '[channels labels]') {
+                selected.forEach(function(m) {
+                    m.create_labels_from_channels({position:position, size:font_size});
+                });
+                return false;
+            }
+
+            if (label_text == '[key-values]') {
+                // Load Map Annotations for this image and create labels
+                showModal("labelsFromMapAnns", {
+                    position: position,
+                    size: font_size,
+                    color: color});
+                return false;
+            }
+
+            if (label_text == '[tags]') {
+                // Load Tags for this image and create labels
+
+                selected.createLabelsFromTags({
+                            position:position,
+                            size:font_size,
+                            color: color});
+                return false;
+            }
+
+            var label = {
+                text: label_text,
+                size: parseInt(font_size, 10),
+                position: position,
+                color: color
+            };
+
+            selected.forEach(function(m) {
+                m.add_labels([label]);
+            });
+            return false;
+        },
+
+        render: function() {
+
+            var selected = this.model.getSelected();
+
+            // html is already in place for 'New Label' form - simply show/hide
+            if (selected.length === 0) {
+                $(".new-label-form", this.$el).hide();
+            } else {
+                $(".new-label-form", this.$el).show();
+                // if none of the selected panels have time data, disable 'add_time_label's
+                var have_time = false, dTs;
+                selected.forEach(function(p){
+                    dTs = p.get('deltaT');
+                    if (dTs && dTs.length > 0) {
+                        have_time = true;
+                    }
+                });
+                if (have_time) {
+                    $(".add_time_label", this.$el).removeClass('disabled');
+                } else {
+                    $(".add_time_label", this.$el).addClass('disabled');
+                }
+            }
+
+            // show selected panels labels below
+            var old = this.sel_labels_panel;
+
+            if (selected.length > 0) {
+                this.sel_labels_panel = new SelectedPanelsLabelsView({models: selected});
+                this.sel_labels_panel.render();
+                $("#selected_panels_labels").empty().append(this.sel_labels_panel.$el);
+            }
+            if (old) {
+                old.remove();
+            }
+
+            // show scalebar form for selected panels
+            var old_sb = this.scalebar_form;
+            // if (old_sb) {
+            //     old_sb.remove();
+            // }
+            var $scalebar_form = $("#scalebar_form");
+
+            if (selected.length > 0) {
+                this.scalebar_form = new ScalebarFormView({models: selected});
+                this.scalebar_form.render();
+                $scalebar_form.empty().append(this.scalebar_form.$el);
+            }
+            if (old_sb) {
+                old_sb.remove();
+            }
+
+            return this;
+        }
+
+    });
+
     var SelectedPanelsLabelsView = Backbone.View.extend({
 
         template: _.template(labels_form_template),
         inner_template: _.template(labels_form_inner_template),
 
         initialize: function(opts) {
-
-            // prevent rapid repetative rendering, when listening to multiple panels
-            this.render = _.debounce(this.render);
-
+            this.render = _.debounce(this.render, 300);
             this.models = opts.models;
             var self = this;
 
-            this.models.forEach(function(m){
+            this.models.forEach(function(m) {
                 self.listenTo(m, 'change:labels change:theT', self.render);
             });
+            this.labelOrder = {};
         },
 
         events: {
@@ -502,32 +957,54 @@
             "change .btn": "form_field_changed",
             "blur .label-text": "form_field_changed",
             "click .delete-label": "handle_label_delete",
+            "click .dropdown-menu a": "updateLabelPosition"
+        },
+
+        initializeSortable: function() {
+            var self = this;
+            this.$el.find('.labels-container').each(function() {
+                new Sortable(this, {
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    fallbackOnBody: true,
+                    setData: function(dataTransfer, dragEl) {
+                        dataTransfer.setData('text', dragEl.textContent);
+                    },
+                    onMove: function(evt) {
+                        return evt.related === null || evt.related !== evt.from;
+                    },
+                    onEnd: function(evt) {
+                        if (evt.to !== evt.from) {
+                            self.restoreState();
+                        } else {
+                            self.handleSort(evt);
+                        }
+                    }
+                });
+            });
         },
 
         handle_label_delete: function(event) {
-
             var $form = $(event.target).parent(),
                 key = $form.attr('data-key'),
                 deleteMap = {};
 
-            // escape the key to handle 'single' and "double" quotes
             key = _.escape(key);
             deleteMap[key] = false;
 
-            this.models.forEach(function(m){
+            this.models.forEach(function(m) {
                 m.edit_labels(deleteMap);
             });
+            this.render();
             return false;
         },
 
-        // Automatically submit the form when a field is changed
         form_field_changed: function(event) {
             $(event.target).closest('form').submit();
         },
 
-        // Use the label 'key' to specify which labels to update
         handle_label_edit: function(event) {
-
+            event.preventDefault();
             var $form = $(event.target),
                 label_text = $('.label-text', $form).val(),
                 font_size = $('.font-size', $form).text().trim(),
@@ -535,57 +1012,133 @@
                 color = $('.label-color span:first', $form).attr('data-color'),
                 key = $form.attr('data-key');
 
-            // the 'key' will now be unescaped, so we need to escape it again to compare with model
             key = _.escape(key);
-            var new_label = {text:label_text, size:font_size, position:position, color:color};
-
+            var new_label = { text: label_text, size: font_size, position: position, color: color };
             var newlbls = {};
             newlbls[key] = new_label;
 
-            this.models.forEach(function(m){
-                m.edit_labels(newlbls);
+            this.models.forEach(function(m) {
+                var labels = m.get('labels');
+                if (Array.isArray(labels)) {
+                    var existingLabel = labels.find(label => m.get_label_key(label) === key);
+                    if (existingLabel) {
+                        existingLabel.text = new_label.text;
+                        existingLabel.size = new_label.size;
+                        existingLabel.position = new_label.position;
+                        existingLabel.color = new_label.color;
+                        m.set('labels', labels);
+                    }
+                } else {
+                    console.error("Labels is not an array", m);
+                }
             });
+
+            this.render();
             return false;
         },
 
-        render: function() {
+        handleSort: function(evt) {
+            var container = evt.from;
+            var forms = container.querySelectorAll('.edit-label-form');
 
+            var reorderedKeys = Array.from(forms).map(form => form.getAttribute('data-key'));
+            this.models.forEach(function(panelModel) {
+                var labels = panelModel.get('labels');
+                var reorderedLabels = reorderedKeys.map(key => labels.find(label => panelModel.get_label_key(label) === key));
+                panelModel.set('labels', reorderedLabels);
+            });
+
+            this.labelOrder = reorderedKeys;
+            this.render();
+        },
+
+        updateLabelPosition: function(event) {
+            event.preventDefault();
+            var $target = $(event.target).closest('a');
+            var position = $target.find('i').attr('data-position');
+            var $form = $target.closest('.edit-label-form');
+            var key = $form.attr('data-key');
+
+            this.models.forEach(function(m) {
+                var labels = m.get('labels');
+                var label = labels.find(label => m.get_label_key(label) === key);
+                if (label) {
+                    label.position = position;
+                    m.set('labels', labels);
+                }
+            });
+
+            this.render();
+        },
+
+        captureState: function() {
+            var self = this;
+            this.models.forEach(function(model) {
+                var labels = model.get('labels');
+                var order = labels.map(label => model.get_label_key(label));
+                self.labelOrder[model.cid] = order;
+            });
+        },
+
+        restoreState: function() {
+            var self = this;
+            this.models.forEach(function(model) {
+                var labels = model.get('labels');
+                var order = self.labelOrder[model.cid];
+                if (order) {
+                    var reorderedLabels = order.map(key => labels.find(label => model.get_label_key(label) === key));
+                    model.set('labels', reorderedLabels);
+                }
+            });
+        },
+
+        render: function() {
+            this.captureState();
             var self = this,
-                positions = {'top':{}, 'bottom':{}, 'left':{}, 'leftvert':{}, 'right':{},'rightvert':{},
-                    'topleft':{}, 'topright':{}, 'bottomleft':{}, 'bottomright':{}};
-            this.models.forEach(function(m){
-                // group labels by position
+                positions = {
+                    'top': {},
+                    'bottom': {},
+                    'left': {},
+                    'leftvert': {},
+                    'right': {},
+                    'rightvert': {},
+                    'topleft': {},
+                    'topright': {},
+                    'bottomleft': {},
+                    'bottomright': {}
+                };
+
+            this.models.forEach(function(m) {
                 _.each(m.get('labels'), function(l) {
-                    // remove duplicates by mapping to unique key
                     var key = m.get_label_key(l),
                         ljson = $.extend(true, {}, l);
-                        ljson.key = key;
+                    ljson.key = key;
                     positions[l.position][key] = ljson;
                 });
             });
 
             this.$el.empty();
 
-            // Render template for each position and append to $el
             var html = "";
             _.each(positions, function(lbls, p) {
-
                 let position_icon_cls = LABEL_POSITION_ICONS[p];
-                lbls = _.map(lbls, function(label, key){
-                    return {...label, position_icon_cls};
+                lbls = _.map(lbls, function(label, key) {
+                    return { ...label, position_icon_cls };
                 });
 
-                var json = {'position':p, 'labels':lbls, 'position_icon_cls': position_icon_cls};
-                if (lbls.length === 0) return;
+                var json = { 'position': p, 'labels': lbls, 'position_icon_cls': position_icon_cls };
+                if (Object.keys(lbls).length === 0) return;
                 json.inner_template = self.inner_template;
                 html += self.template(json);
             });
+
             self.$el.append(html);
 
+            self.initializeSortable();
+            this.restoreState();
             return this;
         }
     });
-
 
     var ImageViewerView = Backbone.View.extend({
 
@@ -637,7 +1190,6 @@
                 });
 
             this.$vp_zoom_value = $("#vp_zoom_value");
-            
 
             // We nest the ZoomView so we can update it on update_img_css
             this.zmView = new ZoomView({models: this.models,
@@ -701,7 +1253,8 @@
                 return;     // Ignore keyups except 'Enter'
             }
 
-            // get the current entered value 
+
+            // get the current entered value
             var value = parseInt(event.target.value);
             if (isNaN(value)) {
                 return;
@@ -905,7 +1458,6 @@
             return this;
         }
     });
-
 
     var ZoomView = Backbone.View.extend({
 
@@ -1134,3 +1686,625 @@
     });
 
     export default RightPanelView;
+        // Created new for each selection change
+//     var SelectedPanelsLabelsView = Backbone.View.extend({
+
+//         template: _.template(labels_form_template),
+//         inner_template: _.template(labels_form_inner_template),
+
+//         initialize: function(opts) {
+
+//             // prevent rapid repetative rendering, when listening to multiple panels
+//             this.render = _.debounce(this.render);
+//             this.models = opts.models;
+//             var self = this;
+
+//             this.models.forEach(function(m){
+//                 self.listenTo(m, 'change:labels change:theT', self.render);
+//             });
+//             this.labelOrder = {};
+//         },
+
+//         events: {
+//             "submit .edit-label-form": "handle_label_edit",
+//             "change .btn": "form_field_changed",
+//             "blur .label-text": "form_field_changed",
+//             "click .delete-label": "handle_label_delete",
+//         },
+
+//         handle_label_delete: function(event) {
+
+//             var $form = $(event.target).parent(),
+//                 key = $form.attr('data-key'),
+//                 deleteMap = {};
+
+//             // escape the key to handle 'single' and "double" quotes
+//             key = _.escape(key);
+//             deleteMap[key] = false;
+
+//             this.models.forEach(function(m){
+//                 m.edit_labels(deleteMap);
+//             });
+//             this.render();
+//             return false;
+//         },
+
+//         // Automatically submit the form when a field is changed
+//         form_field_changed: function(event) {
+//             $(event.target).closest('form').submit();
+//         },
+
+//         // Use the label 'key' to specify which labels to update
+// //         handle_label_edit: function(event) {
+
+// //             var $form = $(event.target),
+// //                 label_text = $('.label-text', $form).val(),
+// //                 font_size = $('.font-size', $form).text().trim(),
+// //                 position = $('.label-position i:first', $form).attr('data-position'),
+// //                 color = $('.label-color span:first', $form).attr('data-color'),
+// //                 key = $form.attr('data-key');
+
+// //             // the 'key' will now be unescaped, so we need to escape it again to compare with model
+// //             key = _.escape(key);
+// //             var new_label = {text:label_text, size:font_size, position:position, color:color};
+
+// //             var newlbls = {};
+// //             newlbls[key] = new_label;
+
+// //             this.models.forEach(function(m){
+// //                 m.edit_labels(newlbls);
+// //             });
+
+// //             this.render();
+// //             return false;
+// //         },
+
+//         handle_label_edit: function(event) {
+//             event.preventDefault();
+//             var $form = $(event.target),
+//                 label_text = $('.label-text', $form).val(),
+//                 font_size = $('.font-size', $form).val().trim(), // Changed to .val() to get input value
+//                 position = $('.label-position i:first', $form).attr('data-position'),
+//                 color = $('.label-color span:first', $form).attr('data-color'),
+//                 key = $form.attr('data-key');
+
+//             console.log("Font Size:", font_size);
+
+//             key = _.escape(key);
+//             var new_label = {text: label_text, size: parseInt(font_size, 10), position: position, color: color};
+
+//             this.models.forEach(function(m) {
+//                 var labels = m.get('labels');
+//                 if (Array.isArray(labels)) {
+//                     var existingLabel = labels.find(label => m.get_label_key(label) === key);
+//                     if (existingLabel) {
+//                         existingLabel.text = new_label.text;
+//                         existingLabel.size = new_label.size;
+//                         existingLabel.position = new_label.position; // Ensure position is updated
+//                         existingLabel.color = new_label.color;
+//                         m.set('labels', labels); // Update model with modified labels
+//                         m.trigger('change:labels'); // Trigger change event to re-render
+//                     }
+//                 } else {
+//                     console.error("Labels is not an array", m);
+//                 }
+//             });
+
+//             this.render();
+//             return false;
+//         },
+
+//         initializeSortable: function() {
+//             var self = this;
+//             var el = this.$el.find('.labels-container').get(0);
+//              // Check if the element exists
+//             if (!el) {
+//                 console.warn('Sortable element not found.');
+//                 return;
+//             }
+
+//             // Destroy existing Sortable instance if any
+//             if (this.sortable) {
+//                 this.sortable.destroy();
+//                 // this.sortable = null;
+//             }
+
+//             // Initialize Sortable
+//             this.sortable = new Sortable(el, {
+//                 animation: 150,
+//                 ghostClass: 'sortable-ghost', // Class applied to the dragged element
+//                 onEnd: function(evt) {
+//                     self.handleSort(evt);
+//                 }
+//             });
+//         },
+
+//         handleSort: function(evt) {
+//             var container = this.$el.find('.labels-container').get(0);
+//             var forms = container.querySelectorAll('.edit-label-form');
+
+//             // Extract label keys in the new order
+//             var reorderedKeys = Array.from(forms).map(form => form.getAttribute('data-key'));
+
+//             // Update the order of labels in each panel
+//             this.models.forEach(function(panelModel) {
+//                 var labels = panelModel.get('labels');
+//                 var reorderedLabels = reorderedKeys.map(key => labels.find(label => panelModel.get_label_key(label) === key));
+//                 panelModel.set('labels', reorderedLabels);
+//             });
+
+//             // Save the FigureModel instance
+//             // this.saveFigureModel();
+//         },
+
+//         render: function() {
+
+//             var self = this,
+//                 positions = {'top':{}, 'bottom':{}, 'left':{}, 'leftvert':{}, 'right':{},'rightvert':{},
+//                     'topleft':{}, 'topright':{}, 'bottomleft':{}, 'bottomright':{}};
+//             this.models.forEach(function(m){
+//                 // group labels by position
+//                 _.each(m.get('labels'), function(l) {
+//                     // remove duplicates by mapping to unique key
+//                     var key = m.get_label_key(l),
+//                         ljson = $.extend(true, {}, l);
+//                         ljson.key = key;
+//                     positions[l.position][key] = ljson;
+//                 });
+//             });
+
+//             this.$el.empty();
+
+//             // Render template for each position and append to $el
+//             var html = "";
+//             _.each(positions, function(lbls, p) {
+
+//                 let position_icon_cls = LABEL_POSITION_ICONS[p];
+//                 lbls = _.map(lbls, function(label, key){
+//                     return {...label, position_icon_cls};
+//                 });
+
+//                 var json = {'position':p, 'labels':lbls, 'position_icon_cls': position_icon_cls};
+//                 if (lbls.length === 0) return;
+//                 json.inner_template = self.inner_template;
+//                 html += self.template(json);
+//             });
+//             self.$el.append(html);
+//             this.initializeSortable();
+//             return this;
+//         }
+//     });
+
+//   //  Created new for each selection change
+//     var SelectedPanelsLabelsView = Backbone.View.extend({
+
+//         template: _.template(labels_form_template),
+//         inner_template: _.template(labels_form_inner_template),
+
+//         initialize: function(opts) {
+
+//             // prevent rapid repetative rendering, when listening to multiple panels
+//             this.render = _.debounce(this.render);
+//             this.models = opts.models;
+//             var self = this;
+
+//             this.models.forEach(function(m) {
+//                 self.listenTo(m, 'change:labels change:theT', self.render);
+//             });
+//             this.labelOrder = {};
+//         },
+
+//         events: {
+//             "submit .edit-label-form": "handle_label_edit",
+//             "change .btn": "form_field_changed",
+//             "blur .label-text": "form_field_changed",
+//             "click .delete-label": "handle_label_delete",
+//             "click .dropdown-menu a": "updateLabelPosition"
+//         },
+
+//         initializeSortable: function() {
+//             var self = this;
+//             var el = this.$el.find('.labels-container').get(0);
+
+//             if(!el){
+//                 console.warn("El is not available");
+//             }
+//             // Destroy existing Sortable instance if any
+//             if (this.sortable) {
+//                 this.sortable.destroy();
+//             }
+//              // Initialize Sortable
+//             this.sortable = new Sortable(el, {
+//             animation: 150,
+//             removeOnSpill: true,
+//             onEnd: function(evt) {
+//                 self.handleSort(evt);
+//             },
+//             onSpill: function(evt) {
+//                 // Handle the case where an item is dropped outside the container
+//                 var itemEl = evt.item; // the current dragged HTMLElement
+//                 var key = itemEl.getAttribute('data-key');
+//                 var deleteMap = {};
+//                 key = _.escape(key);
+//                 deleteMap[key] = false;
+
+//                 self.models.forEach(function(m) {
+//                     m.edit_labels(deleteMap);
+//                 });
+
+//             self.render();
+//             }
+//             // Initialize Sortable
+//             // this.sortable = new Sortable(el, {
+//             //     animation: 150,
+//             //     ghostClass: 'sortable-ghost', // Prevent outside dragging
+//             //     fallbackOnBody: true, // Enable dragging elements outside the container
+//             // setData: function(dataTransfer, dragEl) {
+//             //     // Set the data to be transferred during drag
+//             //     dataTransfer.setData('text', dragEl.textContent);
+//             // },
+//             // onMove: function(evt) {
+//             //     // Allow dragging outside the container
+//             //     return evt.related === null || evt.related !== evt.from;
+//             // },
+//             // onEnd: function(evt) {
+//             //     if (evt.to !== evt.from) {
+//             //         // If the element is dropped outside the container, revert it back to the original position
+//             //         self.restoreState();
+//             //     } else {
+//             //         self.handleSort(evt);
+//             //     }
+//             // }
+//         });
+//     },
+
+//     updateLabelPosition: function(event) {
+//         alert("It's changing label position I don't know what you are doing....");
+//         event.preventDefault();
+//         var position = $(event.target).find('i').attr('data-position');
+//         var label = $('.label-text');
+//         label.css('position', position); // Update the label position
+//     },
+
+//     handle_label_delete: function(event) {
+
+//         var $form = $(event.target).parent(),
+//             key = $form.attr('data-key'),
+//             deleteMap = {};
+
+//         // escape the key to handle 'single' and "double" quotes
+//         key = _.escape(key);
+//         deleteMap[key] = false;
+
+//         this.models.forEach(function(m) {
+//             m.edit_labels(deleteMap);
+//         });
+//         this.render();
+//         return false;
+//     },
+
+//     // Automatically submit the form when a field is changed
+//     form_field_changed: function(event) {
+//         $(event.target).closest('form').submit();
+//     },
+
+//     // Use the label 'key' to specify which labels to update
+//     handle_label_edit: function(event) {
+//         event.preventDefault();
+//         var $form = $(event.target),
+//             label_text = $('.label-text', $form).val(),
+//             font_size = $('.font-size', $form).text().trim(),
+//             position = $('.label-position i:first', $form).attr('data-position'),
+//             color = $('.label-color span:first', $form).attr('data-color'),
+//             key = $form.attr('data-key');
+
+//         // the 'key' will now be unescaped, so we need to escape it again to compare with model
+//         key = _.escape(key);
+//         var new_label = { text: label_text, size: font_size, position: position, color: color };
+
+//         var newlbls = {};
+//         newlbls[key] = new_label;
+
+//         this.models.forEach(function(m) {
+//             m.edit_labels(newlbls);
+//         });
+
+//         //    Update Sortable with new order(after potential model update)
+//         //    this.$el.find('.labels-container').get(0).sortable.update();
+//         //    this.models.forEach(function(m) {
+//         //        var labels = m.get('labels');
+//         //        if (Array.isArray(labels)) {
+//         //            var existingLabel = labels.find(label => m.get_label_key(label) === key);
+//         //            if (existingLabel) {
+//         //                existingLabel.text = new_label.text;
+//         //                existingLabel.size = new_label.size;
+//         //                existingLabel.position = new_label.position; // Ensure position is updated
+//         //                existingLabel.color = new_label.color;
+//         //                m.set('labels', labels); // Update model with modified labels
+//         //            }
+//         //        } else {
+//         //            console.error("Labels is not an array", m);
+//         //        }
+//         //    });
+//         this.render();
+//         return false;
+//     },
+
+//     handleSort: function(evt) {
+//         var container = this.$el.find('.labels-container').get(0);
+//         var forms = container.querySelectorAll('.edit-label-form');
+
+//         // Extract label keys in the new order
+//         var reorderedKeys = Array.from(forms).map(form => form.getAttribute('data-key'));
+//         alert(reorderedKeys);
+//         // Update the order of labels in each panel
+//         this.models.forEach(function(panelModel) {
+//             var labels = panelModel.get('labels');
+//             var reorderedLabels = reorderedKeys.map(key => labels.find(label => panelModel.get_label_key(label) === key));
+//             panelModel.set('labels', reorderedLabels);
+//         });
+//         // Save the FigureModel instance
+//         // this.saveFigureModel();
+//         this.labelOrder = reorderedKeys;
+
+//     },
+
+//     captureState: function() {
+//         var self = this;
+//         this.models.forEach(function(model) {
+//             var labels = model.get('labels');
+//             var order = labels.map(label => model.get_label_key(label));
+//             self.labelOrder[model.cid] = order;
+//         });
+//     },
+
+//     restoreState: function() {
+//         var self = this;
+//         this.models.forEach(function(model) {
+//             var labels = model.get('labels');
+//             var order = self.labelOrder[model.cid];
+//             if (order) {
+//                 var reorderedLabels = order.map(key => labels.find(label => model.get_label_key(label) === key));
+//                 model.set('labels', reorderedLabels);
+//                 console.log("restoreState:", order);
+//             }
+//         });
+//     },
+
+
+//     render: function() {
+//         this.captureState();
+//         var self = this,
+//             positions = {
+//                 'top': {},
+//                 'bottom': {},
+//                 'left': {},
+//                 'leftvert': {},
+//                 'right': {},
+//                 'rightvert': {},
+//                 'topleft': {},
+//                 'topright': {},
+//                 'bottomleft': {},
+//                 'bottomright': {}
+//             };
+//         this.models.forEach(function(m) {
+//             // group labels by position
+//             _.each(m.get('labels'), function(l) {
+//                 // remove duplicates by mapping to unique key
+//                 var key = m.get_label_key(l),
+//                     ljson = $.extend(true, {}, l);
+//                 ljson.key = key;
+//                 positions[l.position][key] = ljson;
+//             });
+//         });
+
+//         this.$el.empty();
+
+//         // Render template for each position and append to $el
+//         var html = "";
+//         _.each(positions, function(lbls, p) {
+
+//             let position_icon_cls = LABEL_POSITION_ICONS[p];
+//             lbls = _.map(lbls, function(label, key) {
+//                 return {...label, position_icon_cls };
+//             });
+
+//             var json = { 'position': p, 'labels': lbls, 'position_icon_cls': position_icon_cls };
+//             // if (lbls.length === 0) return;
+//             if (Object.keys(lbls).length === 0) return;
+//             json.inner_template = self.inner_template;
+//             html += self.template(json);
+//         });
+//         // console.log(html);
+//         self.$el.append(html);
+//         this.initializeSortable();
+//         this.restoreState();
+//         return this;
+//     }
+//     });
+
+
+// var SelectedPanelsLabelsView = Backbone.View.extend({
+
+//     template: _.template(labels_form_template),
+//     inner_template: _.template(labels_form_inner_template),
+
+//     initialize: function(opts) {
+//         this.render = _.debounce(this.render, 300);
+//         this.models = opts.models;
+//         var self = this;
+
+//         this.models.forEach(function(m) {
+//             self.listenTo(m, 'change:labels change:theT', self.render);
+//         });
+//         this.labelOrder = {};
+//     },
+
+//     events: {
+//         "submit .edit-label-form": "handle_label_edit",
+//         "change .btn": "form_field_changed",
+//         "blur .label-text": "form_field_changed",
+//         "click .delete-label": "handle_label_delete",
+//         "click .dropdown-menu a": "updateLabelPosition"
+//     },
+
+//     initializeSortable: function() {
+//         var self = this;
+//         this.$el.find('.labels-container').each(function() {
+//             new Sortable(this, {
+//                 animation: 150,
+//                 ghostClass: 'sortable-ghost',
+//                 fallbackOnBody: true,
+//                 setData: function(dataTransfer, dragEl) {
+//                     dataTransfer.setData('text', dragEl.textContent);
+//                 },
+//                 onMove: function(evt) {
+//                     return evt.related === null || evt.related !== evt.from;
+//                 },
+//                 onEnd: function(evt) {
+//                     if (evt.to !== evt.from) {
+//                         self.restoreState();
+//                     } else {
+//                         self.handleSort(evt);
+//                     }
+//                 }
+//             });
+//         });
+//     },
+
+//     handle_label_delete: function(event) {
+//         var $form = $(event.target).parent(),
+//             key = $form.attr('data-key'),
+//             deleteMap = {};
+
+//         key = _.escape(key);
+//         deleteMap[key] = false;
+
+//         this.models.forEach(function(m) {
+//             m.edit_labels(deleteMap);
+//         });
+//         this.render();
+//         return false;
+//     },
+
+//     form_field_changed: function(event) {
+//         $(event.target).closest('form').submit();
+//     },
+
+//     handle_label_edit: function(event) {
+//         event.preventDefault();
+//         var $form = $(event.target),
+//             label_text = $('.label-text', $form).val(),
+//             font_size = $('.font-size', $form).text().trim(),
+//             position = $('.label-position i:first', $form).attr('data-position'),
+//             color = $('.label-color span:first', $form).attr('data-color'),
+//             key = $form.attr('data-key');
+
+//         key = _.escape(key);
+//         var new_label = { text: label_text, size: font_size, position: position, color: color };
+//         var newlbls = {};
+//         newlbls[key] = new_label;
+
+//         this.models.forEach(function(m) {
+//             var labels = m.get('labels');
+//             if (Array.isArray(labels)) {
+//                 var existingLabel = labels.find(label => m.get_label_key(label) === key);
+//                 if (existingLabel) {
+//                     existingLabel.text = new_label.text;
+//                     existingLabel.size = new_label.size;
+//                     existingLabel.position = new_label.position;
+//                     existingLabel.color = new_label.color;
+//                     m.set('labels', labels);
+//                 }
+//             } else {
+//                 console.error("Labels is not an array", m);
+//             }
+//         });
+
+//         this.render();
+//         return false;
+//     },
+
+//     handleSort: function(evt) {
+//         var container = this.$el.find('.labels-container').get(0);
+//         var forms = container.querySelectorAll('.edit-label-form');
+
+//         var reorderedKeys = Array.from(forms).map(form => form.getAttribute('data-key'));
+//         this.models.forEach(function(panelModel) {
+//             var labels = panelModel.get('labels');
+//             var reorderedLabels = reorderedKeys.map(key => labels.find(label => panelModel.get_label_key(label) === key));
+//             panelModel.set('labels', reorderedLabels);
+//         });
+
+//         this.labelOrder = reorderedKeys;
+//         this.render();
+//     },
+
+//     captureState: function() {
+//         var self = this;
+//         this.models.forEach(function(model) {
+//             var labels = model.get('labels');
+//             var order = labels.map(label => model.get_label_key(label));
+//             self.labelOrder[model.cid] = order;
+//         });
+//     },
+
+//     restoreState: function() {
+//         var self = this;
+//         this.models.forEach(function(model) {
+//             var labels = model.get('labels');
+//             var order = self.labelOrder[model.cid];
+//             if (order) {
+//                 var reorderedLabels = order.map(key => labels.find(label => model.get_label_key(label) === key));
+//                 model.set('labels', reorderedLabels);
+//             }
+//         });
+//     },
+
+//     render: function() {
+//         this.captureState();
+//         var self = this,
+//             positions = {
+//                 'top': {},
+//                 'bottom': {},
+//                 'left': {},
+//                 'leftvert': {},
+//                 'right': {},
+//                 'rightvert': {},
+//                 'topleft': {},
+//                 'topright': {},
+//                 'bottomleft': {},
+//                 'bottomright': {}
+//             };
+
+//         this.models.forEach(function(m) {
+//             _.each(m.get('labels'), function(l) {
+//                 var key = m.get_label_key(l),
+//                     ljson = $.extend(true, {}, l);
+//                 ljson.key = key;
+//                 positions[l.position][key] = ljson;
+//             });
+//         });
+
+//         this.$el.empty();
+
+//         var html = "";
+//         _.each(positions, function(lbls, p) {
+//             let position_icon_cls = LABEL_POSITION_ICONS[p];
+//             lbls = _.map(lbls, function(label, key) {
+//                 return { ...label, position_icon_cls };
+//             });
+
+//             var json = { 'position': p, 'labels': lbls, 'position_icon_cls': position_icon_cls };
+//             if (Object.keys(lbls).length === 0) return;
+//             json.inner_template = self.inner_template;
+//             html += self.template(json);
+//         });
+
+//         self.$el.append(html);
+
+//         self.initializeSortable();
+//         this.restoreState();
+//         return this;
+//     }
+// });
