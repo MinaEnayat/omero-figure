@@ -353,26 +353,43 @@
                 }
         
                 ljson.text = DOMPurify.sanitize(marked.parse(ljson.text));
-        
-                // Select template based on label position
-                var templateName;
-                if (ljson.position === 'leftvert') {
-                    templateName = 'label_vertical_template';
-                } else if (ljson.position === 'rightvert') {
-                    templateName = 'label_right_vertical_template';
-                } else if (ljson.position === 'left' || ljson.position === 'right') {
-                    templateName = 'label_table_template';
-                } else {
-                    templateName = 'label_template';
-                }
-        
-                // Render the template with the processed label data
-                var html = self[templateName]({ labels: [ljson], position: ljson.position });
-        
-                // Append the rendered HTML to the panel element
-                self.$el.append(html);
             });
+
+                var html = '';
+                _.each(labels, function(label){
+                // Select template based on label position
+                    var json = {'labels': [label], 'position': label.position};
+                // if (lbls.length === 0) return;
+                    if (label.position == 'leftvert') {  // vertical
+                        html += self.label_vertical_template(json);
+                    } else if (label.position == 'rightvert') {
+                        html += self.label_right_vertical_template(json);
+                    } else if (label.position == 'left' || label.position == 'right') {
+                        html += self.label_table_template(json);
+                    } else {
+                        html += self.label_template(json);
+                    }
+                });
+                self.$el.append(html);
+
+                // var templateName;
+                // if (ljson.position === 'leftvert') {
+                //     templateName = 'label_vertical_template';
+                // } else if (ljson.position === 'rightvert') {
+                //     templateName = 'label_right_vertical_template';
+                // } else if (ljson.position === 'left' || ljson.position === 'right') {
+                //     templateName = 'label_table_template';
+                // } else {
+                //     templateName = 'label_template';
+                // }
         
+                // // Render the template with the processed label data
+                // var html = self[templateName]({ labels: [ljson], position: ljson.position });
+        
+                // // Append the rendered HTML to the panel element
+                // self.$el.append(html);
+            // });
+            // self.$el.append(html);
             // Force update of vertical labels layout
             $('.left_vlabels', self.$el).css('width', 3 * self.$el.height() + 'px');
             $('.right_vlabels', self.$el).css('width', 3 * self.$el.height() + 'px');

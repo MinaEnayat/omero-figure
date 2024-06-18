@@ -392,7 +392,8 @@
         opacity: 0.5;
     }
     .label_layout {
-        position:absolute;
+        position: relative;   
+        margin: 0;      
     }
     .label_layout p {
         margin: 0;
@@ -405,7 +406,7 @@
     }
     .label_middle, .label_middle table, .label_middle td {
         height:100%;
-        width:10000px;
+        width:100%;
     }
     .label_middle td {
         vertical-align: middle;
@@ -1322,6 +1323,9 @@
     }
 
     .form-inline{
-        border: 1px solid white;
+        border: 1px solid red;
         cursor: move;
+        display: flex;
+        flex-direction: row; 
+        gap: 2px;
     }
