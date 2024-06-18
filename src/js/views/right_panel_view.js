@@ -597,36 +597,38 @@
 
         render: function() {
 
-            var self = this,
-                positions = {'top':{}, 'bottom':{}, 'left':{}, 'leftvert':{}, 'right':{},'rightvert':{},
-                    'topleft':{}, 'topright':{}, 'bottomleft':{}, 'bottomright':{}};
-            this.models.forEach(function(m){
-                // group labels by position
-                _.each(m.get('labels'), function(l) {
-                    // remove duplicates by mapping to unique key
-                    var key = m.get_label_key(l),
-                        ljson = $.extend(true, {}, l);
-                        ljson.key = key;
-                    positions[l.position][key] = ljson;
-                });
-            });
-
+            var self = this;
             this.$el.empty();
 
-            // Render template for each position and append to $el
+            // Collect all labels into a flat list
+            var labels = [];
+            this.models.forEach(function(m) {
+                labels = labels.concat(m.get('labels').map(function(l) {
+                    var ljson = $.extend(true, {}, l);
+                    ljson.key = m.get_label_key(l);
+
+                    // Get the position icon class based on the position
+                    let position_icon_cls = LABEL_POSITION_ICONS[ljson.position] || 'default';
+                    ljson.position_icon_cls = position_icon_cls;
+                    console.log(position_icon_cls);
+                    return ljson;
+                }));
+            });
+            // console.log(labels);
+            
             var html = "";
-            _.each(positions, function(lbls, p) {
+            if (labels.length > 0) {
+                // let position_icon_cls = 'default';
+                // labels = labels.map(function(label) {
+                //     return {...label, position_icon_cls };
+                // });
 
-                let position_icon_cls = LABEL_POSITION_ICONS[p];
-                lbls = _.map(lbls, function(label, key){
-                    return {...label, position_icon_cls};
-                });
-
-                var json = {'position':p, 'labels':lbls, 'position_icon_cls': position_icon_cls};
-                if (lbls.length === 0) return;
+                var json = {'labels': labels};
+                console.log(json);
                 json.inner_template = self.inner_template;
                 html += self.template(json);
-            });
+            }
+           
             self.$el.append(html);
             this.initializeSortable();
             return this;

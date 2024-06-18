@@ -179,26 +179,126 @@
             }
         },
 
+        // render_labels: function() {
+
+        //     $('.label_layout', this.$el).remove();  // clear existing labels
+
+        //     var labels = this.model.get('labels'),
+        //         self = this,
+        //         positions = {
+        //             'top':[], 'bottom':[], 'left':[], 'right':[],
+        //             'leftvert':[],'rightvert':[],
+        //             'topleft':[], 'topright':[],
+        //             'bottomleft':[], 'bottomright':[]
+        //         };
+
+        //     // group labels by position
+        //     _.each(labels, function(l) {
+        //         // check if label is dynamic delta-T
+        //         var ljson = $.extend(true, {}, l);
+        //         // If label is same color as page (and is outside of panel)
+        //         if (ljson.color.toLowerCase() == self.page_color.toLowerCase() &&
+        //                 ["top", "bottom", "left", "right", "leftvert", "rightvert"].indexOf(l.position) > -1 ) {
+        //             // If black -> white, otherwise -> black
+        //             if (ljson.color === '000000') {
+        //                 ljson.color = 'ffffff';
+        //             } else {
+        //                 ljson.color = '000000';
+        //             }
+        //         }
+        //         const matches = [...ljson.text.matchAll(/\[.+?\]/g)]; // Non greedy regex capturing expressions in []
+        //         if (matches.length>0){ 
+        //             var new_text = "";
+        //             var last_idx = 0;
+        //             for (const match of matches) {// Loops on the match to replace in the ljson.text the expression by their values
+        //                 var new_text = new_text + ljson.text.slice(last_idx, match.index);
+
+        //                 // Label parsing in three steps:
+        //                 //   - split label type.format from other parameters (;)
+        //                 //   - split label type and format (.)
+        //                 //   - grab other parameters (key=value)
+        //                 var expr = match[0].slice(1,-1).split(";");
+        //                 var prop_nf = expr[0].trim().split(".");
+        //                 var param_dict = {};
+        //                 expr.slice(1).forEach(function(value) {
+        //                     var kv = value.split("=");
+        //                     if (kv.length > 1) {
+        //                         param_dict[kv[0].trim()] = parseInt(kv[1].trim());
+        //                     }
+        //                 });
+
+        //                 var label_value = "",
+        //                     format, precision;
+        //                 if (['time', 't'].includes(prop_nf[0])) {
+        //                     format = prop_nf[1] ? prop_nf[1] : "index";
+        //                     precision = param_dict["precision"] !== undefined ? param_dict["precision"] : 0; // decimal places default to 0
+        //                     label_value = self.model.get_time_label_text(format, param_dict["offset"], precision);
+        //                 } else if (['image', 'dataset'].includes(prop_nf[0])){
+        //                     format = prop_nf[1] ? prop_nf[1] : "name";
+        //                     label_value = self.model.get_name_label_text(prop_nf[0], format);
+        //                     //Escape the underscore for markdown
+        //                     label_value = label_value.replaceAll("_", "\\_");
+        //                 } else if (['x', 'y', 'z', 'width', 'height', 'w', 'h', 'rotation', 'rot'].includes(prop_nf[0])){
+        //                     format = prop_nf[1] ? prop_nf[1] : "pixel";
+        //                     precision = param_dict["precision"] !== undefined ? param_dict["precision"] : 2; // decimal places default to 2
+        //                     label_value = self.model.get_view_label_text(prop_nf[0], format, param_dict["offset"], precision);  
+        //                 } else if (['channels', 'c'].includes(prop_nf[0])) {
+        //                     label_value = self.model.get_channels_label_text();
+        //                 } else if (['zoom'].includes(prop_nf[0])) {
+        //                     label_value = self.model.get_zoom_label_text();
+        //                 }
+
+        //                 //If label_value hasn't been created (invalid prop_nf[0])
+        //                 //  or is empty (invalid prop_nf[1]), the expression is kept intact
+        //                 new_text = new_text + (label_value ? label_value : match[0]);
+        //                 last_idx = match.index + match[0].length;
+        //             }
+        //             ljson.text = new_text + ljson.text.slice(last_idx);
+        //         }
+
+        //         ljson.text = DOMPurify.sanitize(marked.parse(ljson.text));
+
+        //         positions[l.position].push(ljson);
+        //     });
+
+        //     // Render template for each position and append to Panel.$el
+        //     var html = "";
+        //     _.each(positions, function(lbls, p) {
+        //         var json = {'position':p, 'labels':lbls};
+        //         if (lbls.length === 0) return;
+        //         if (p == 'leftvert') {  // vertical
+        //             html += self.label_vertical_template(json);
+        //         } else if (p == 'rightvert') {
+        //             html += self.label_right_vertical_template(json);
+        //         } else if (p == 'left' || p == 'right') {
+        //             html += self.label_table_template(json);
+        //         } else {
+        //             html += self.label_template(json);
+        //         }
+        //     });
+        //     self.$el.append(html);
+
+        //     // need to force update of vertical labels layout
+        //     $('.left_vlabels', self.$el).css('width', 3 * self.$el.height() + 'px');
+        //     $('.right_vlabels', self.$el).css('width', 3 * self.$el.height() + 'px');
+
+        //     return this;
+        // },
+
+        
         render_labels: function() {
-
-            $('.label_layout', this.$el).remove();  // clear existing labels
-
+            this.$el.find('.label_layout', this.$el).remove();
+        
             var labels = this.model.get('labels'),
-                self = this,
-                positions = {
-                    'top':[], 'bottom':[], 'left':[], 'right':[],
-                    'leftvert':[],'rightvert':[],
-                    'topleft':[], 'topright':[],
-                    'bottomleft':[], 'bottomright':[]
-                };
-
-            // group labels by position
-            _.each(labels, function(l) {
-                // check if label is dynamic delta-T
-                var ljson = $.extend(true, {}, l);
-                // If label is same color as page (and is outside of panel)
+                self = this;
+        
+            // Process each label
+            _.each(labels, function(label) {
+                var ljson = $.extend(true, {}, label);
+        
+                // If label is the same color as the page (and is outside of panel)
                 if (ljson.color.toLowerCase() == self.page_color.toLowerCase() &&
-                        ["top", "bottom", "left", "right", "leftvert", "rightvert"].indexOf(l.position) > -1 ) {
+                    ["top", "bottom", "left", "right", "leftvert", "rightvert"].indexOf(ljson.position) > -1) {
                     // If black -> white, otherwise -> black
                     if (ljson.color === '000000') {
                         ljson.color = 'ffffff';
@@ -206,18 +306,17 @@
                         ljson.color = '000000';
                     }
                 }
-                const matches = [...ljson.text.matchAll(/\[.+?\]/g)]; // Non greedy regex capturing expressions in []
-                if (matches.length>0){ 
+        
+                // Replace expressions in label text with their values
+                const matches = [...ljson.text.matchAll(/\[.+?\]/g)];
+                if (matches.length > 0) {
                     var new_text = "";
                     var last_idx = 0;
-                    for (const match of matches) {// Loops on the match to replace in the ljson.text the expression by their values
-                        var new_text = new_text + ljson.text.slice(last_idx, match.index);
-
-                        // Label parsing in three steps:
-                        //   - split label type.format from other parameters (;)
-                        //   - split label type and format (.)
-                        //   - grab other parameters (key=value)
-                        var expr = match[0].slice(1,-1).split(";");
+                    for (const match of matches) {
+                        new_text += ljson.text.slice(last_idx, match.index);
+        
+                        // Parse the expression
+                        var expr = match[0].slice(1, -1).split(";");
                         var prop_nf = expr[0].trim().split(".");
                         var param_dict = {};
                         expr.slice(1).forEach(function(value) {
@@ -226,62 +325,58 @@
                                 param_dict[kv[0].trim()] = parseInt(kv[1].trim());
                             }
                         });
-
+        
                         var label_value = "",
                             format, precision;
                         if (['time', 't'].includes(prop_nf[0])) {
                             format = prop_nf[1] ? prop_nf[1] : "index";
-                            precision = param_dict["precision"] !== undefined ? param_dict["precision"] : 0; // decimal places default to 0
+                            precision = param_dict["precision"] !== undefined ? param_dict["precision"] : 0;
                             label_value = self.model.get_time_label_text(format, param_dict["offset"], precision);
-                        } else if (['image', 'dataset'].includes(prop_nf[0])){
+                        } else if (['image', 'dataset'].includes(prop_nf[0])) {
                             format = prop_nf[1] ? prop_nf[1] : "name";
                             label_value = self.model.get_name_label_text(prop_nf[0], format);
-                            //Escape the underscore for markdown
                             label_value = label_value.replaceAll("_", "\\_");
-                        } else if (['x', 'y', 'z', 'width', 'height', 'w', 'h', 'rotation', 'rot'].includes(prop_nf[0])){
+                        } else if (['x', 'y', 'z', 'width', 'height', 'w', 'h', 'rotation', 'rot'].includes(prop_nf[0])) {
                             format = prop_nf[1] ? prop_nf[1] : "pixel";
-                            precision = param_dict["precision"] !== undefined ? param_dict["precision"] : 2; // decimal places default to 2
-                            label_value = self.model.get_view_label_text(prop_nf[0], format, param_dict["offset"], precision);  
+                            precision = param_dict["precision"] !== undefined ? param_dict["precision"] : 2;
+                            label_value = self.model.get_view_label_text(prop_nf[0], format, param_dict["offset"], precision);
                         } else if (['channels', 'c'].includes(prop_nf[0])) {
                             label_value = self.model.get_channels_label_text();
                         } else if (['zoom'].includes(prop_nf[0])) {
                             label_value = self.model.get_zoom_label_text();
                         }
-
-                        //If label_value hasn't been created (invalid prop_nf[0])
-                        //  or is empty (invalid prop_nf[1]), the expression is kept intact
-                        new_text = new_text + (label_value ? label_value : match[0]);
+        
+                        new_text += (label_value ? label_value : match[0]);
                         last_idx = match.index + match[0].length;
                     }
                     ljson.text = new_text + ljson.text.slice(last_idx);
                 }
-
+        
                 ljson.text = DOMPurify.sanitize(marked.parse(ljson.text));
-
-                positions[l.position].push(ljson);
-            });
-
-            // Render template for each position and append to Panel.$el
-            var html = "";
-            _.each(positions, function(lbls, p) {
-                var json = {'position':p, 'labels':lbls};
-                if (lbls.length === 0) return;
-                if (p == 'leftvert') {  // vertical
-                    html += self.label_vertical_template(json);
-                } else if (p == 'rightvert') {
-                    html += self.label_right_vertical_template(json);
-                } else if (p == 'left' || p == 'right') {
-                    html += self.label_table_template(json);
+        
+                // Select template based on label position
+                var templateName;
+                if (ljson.position === 'leftvert') {
+                    templateName = 'label_vertical_template';
+                } else if (ljson.position === 'rightvert') {
+                    templateName = 'label_right_vertical_template';
+                } else if (ljson.position === 'left' || ljson.position === 'right') {
+                    templateName = 'label_table_template';
                 } else {
-                    html += self.label_template(json);
+                    templateName = 'label_template';
                 }
+        
+                // Render the template with the processed label data
+                var html = self[templateName]({ labels: [ljson], position: ljson.position });
+        
+                // Append the rendered HTML to the panel element
+                self.$el.append(html);
             });
-            self.$el.append(html);
-
-            // need to force update of vertical labels layout
+        
+            // Force update of vertical labels layout
             $('.left_vlabels', self.$el).css('width', 3 * self.$el.height() + 'px');
             $('.right_vlabels', self.$el).css('width', 3 * self.$el.height() + 'px');
-
+        
             return this;
         },
 
