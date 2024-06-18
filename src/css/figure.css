@@ -1320,3 +1320,15 @@
     #openFigureModal a {
         text-decoration: none;
     }
+
+    .labels-container{
+        cursor: move;
+    }
+    .form-inline{
+        border: 1px solid white;
+    }
+    .draggable {
+        cursor: move;
+    }
+
+    
