@@ -512,85 +512,68 @@
             $('#calib_btn_right').on('click', this.placeOnRight.bind(this));
         },
 
-        moveImage: function(position, smallImageSelector, bigImageSelector) {
-            const smallImage = $(smallImageSelector);
-            const bigImage = $(bigImageSelector);
-        
-            // Reset position and transform
-            smallImage.css({
-                top: '0',
-                left: '0',
-                bottom: '',
-                right: '',
-                transform: 'none'
-            });
-        
-            const bigImageTop = bigImage.offset().top;
-            const bigImageBottom = bigImageTop + bigImage.outerHeight();
-            const bigImageLeft = bigImage.offset().left;
-            const bigImageRight = bigImageLeft + bigImage.outerWidth();
-        
-            const smallImageWidth = bigImage.outerWidth() * 0.3;  // Set dynamic width as 30% of bigImage width
-            const smallImageHeight = bigImage.outerHeight() * 0.05;  // Set dynamic height as 5% of bigImage height
-        
-            if (position === 'left') {
-                smallImage.css({
-                    width: `${bigImage.outerHeight()}px`,  // Use the height of the big image
-                    height: `${smallImageHeight}px`,  // Dynamic height, e.g., 5% of bigImage height
-                    top: `${bigImageTop}px`,
-                    left: `${bigImageLeft - 10}px`,
-                    transform: 'rotate(90deg)',
-                    transformOrigin: 'left top'
-                });
-            } else if (position === 'right') {
-                smallImage.css({
-                    width: `${bigImage.outerHeight()}px`,  // Use the height of the big image
-                    height: `${smallImageHeight}px`,  // Dynamic height
-                    top: `${bigImageTop}px`,
-                    left: `${bigImageRight + 20}px`,
-                    transform: 'rotate(90deg)',
-                    transformOrigin: 'left top'
-                });
-            } else if (position === 'top') {
-                smallImage.css({
-                    width: `${smallImageWidth}px`,  // Dynamic width as 30% of bigImage width
-                    height: `${smallImageHeight}px`,  // Dynamic height
-                    top: `${bigImageTop - smallImage.outerHeight() - 10}px`,
-                    left: '50%',
-                    transform: 'translateX(-50%)'
-                });
-            } else if (position === 'bottom') {
-                smallImage.css({
-                    width: `${smallImageWidth}px`,  // Dynamic width
-                    height: `${smallImageHeight}px`,  // Dynamic height
-                    top: `${bigImageBottom + 10}px`,
-                    left: '50%',
-                    transform: 'translateX(-50%)'
-                });
-            }
-        },        
-
         // Button click handlers for testing
         placeOnTop: function() {
-            this.resetBarPosition();
-            this.moveImage('top', '.calibration_bar', '.imgContainer');  // Using jQuery selectors
-        },
-        
+            this.resetBarPosition();            
+            const bigImage = $('.imgContainer');
+            const bigImageTop = bigImage.position().top;        
+            const smallImage = $('.calibration_bar');
+
+            smallImage.css({
+                top: `${bigImageTop - smallImage.outerHeight() - 10}px`,
+                left: '50%',
+                transform: 'translateX(-50%)'
+            });
+        },        
+    
         placeOnBottom: function() {
-            this.resetBarPosition();
-            this.moveImage('bottom', '.calibration_bar', '.imgContainer');
-        },
+            this.resetBarPosition();            
+            const bigImage = $('.imgContainer');
+            const bigImageTop = bigImage.position().top;
+            const bigImageHeight = bigImage.height();
+            const bigImageBottom = bigImageTop + bigImageHeight;           
         
+            const smallImage = $('.calibration_bar');
+            smallImage.css({
+                top: `${bigImageBottom + 10}px`,
+                left: '50%',
+                transform: 'translateX(-50%)'
+            });
+        
+        },
+    
         placeOnLeft: function() {
-            this.resetBarPosition();
-            this.moveImage('left', '.calibration_bar', '.imgContainer');
+            this.resetBarPosition();  // Reset the bar's previous position first
+            const bigImage = $('.imgContainer');
+            const bigImageTop = bigImage.position().top;
+            const bigImageLeft = bigImage.position().left;
+    
+            const smallImage = $('.calibration_bar');
+            smallImage.css({
+                // width: `${bigImageHeight}px`,
+                top: `${bigImageTop}px`,
+                left: `${bigImageLeft - 10}px`,
+                transform: 'rotate(90deg)',
+                transformOrigin: 'left top',
+            });
         },
-        
+    
         placeOnRight: function() {
-            this.resetBarPosition();
-            this.moveImage('right', '.calibration_bar', '.imgContainer');
+            this.resetBarPosition();  // Reset the bar's previous position first
+            const bigImage = $('.imgContainer');
+            const bigImageTop = bigImage.position().top;
+            const bigImageLeft = bigImage.position().left;
+            const bigImageRight = bigImageLeft + bigImage.width();
+
+            const smallImage = $('.calibration_bar');
+            smallImage.css({
+                // width: `${bigImageHeight}px`,
+                top: `${bigImageTop}px`,
+                left: `${bigImageRight + 30}px`,
+                transform: 'rotate(90deg)',
+                transformOrigin: 'left top',
+            });
         },
-        
 
         resetBarPosition: function() {
             this.$('.calibration_bar').css({
