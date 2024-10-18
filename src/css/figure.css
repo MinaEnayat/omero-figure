@@ -118,17 +118,12 @@
     }
     
     .imgContainer {
-        /* overflow: hidden;
+        overflow: hidden;
         width: 100%;
         height: 100%;
-        position: relative; */
+        position: relative;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center; /* Center them vertically within the container */
-        position: relative; /* Ensure proper positioning of elements */
-        width: 100%; /* Full width for the container */
-        height: auto;
     }
     .imgContainer img, .imgContainer div {
         position: absolute;
@@ -141,12 +136,7 @@
     }
 
     .img_panel{
-        /* position: absolute;*/
-        margin-bottom: 5px;
-        width: auto; /* Set the image width to auto or fixed based on your requirement */
-        max-width: 100%; /* Ensure the image does not overflow the container */
-        margin-bottom: 5px;
-        position: relative; 
+        position: relative;
     }
 
     .export_pdf>span {
@@ -1352,17 +1342,9 @@
 
     .calibration_bar {
         width: 100%; /* Full width of the image */
-        margin-top: 5px; /* Add space between the image and calibration bar */
-        position: absolute; /* No longer absolute to work within flexbox flow */
-        display: flex;
-        justify-content: center;
-    }
-
-    #calibration_buttons_container {
-        margin-top: 10px; /* Add margin above the calibration buttons */
-        display: flex;
-        justify-content: center; /* Center align the buttons */
-        gap: 10px; /* Add space between buttons */
+        margin-top: 15px; /* Slight gap between image and calibration bar */
+        position: absolute;
+        /* border: 1px solid black; */
     }
 
 
