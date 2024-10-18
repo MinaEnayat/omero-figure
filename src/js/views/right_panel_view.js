@@ -495,6 +495,7 @@
         initialize: function(opts) {
             this.model = opts.model;
             this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'drag_resize', this.placeOnLeft);
         },
     
         // events: {
@@ -511,42 +512,85 @@
             $('#calib_btn_right').on('click', this.placeOnRight.bind(this));
         },
 
+        moveImage: function(position, smallImageSelector, bigImageSelector) {
+            const smallImage = $(smallImageSelector);
+            const bigImage = $(bigImageSelector);
+        
+            // Reset position and transform
+            smallImage.css({
+                top: '0',
+                left: '0',
+                bottom: '',
+                right: '',
+                transform: 'none'
+            });
+        
+            const bigImageTop = bigImage.offset().top;
+            const bigImageBottom = bigImageTop + bigImage.outerHeight();
+            const bigImageLeft = bigImage.offset().left;
+            const bigImageRight = bigImageLeft + bigImage.outerWidth();
+        
+            const smallImageWidth = bigImage.outerWidth() * 0.3;  // Set dynamic width as 30% of bigImage width
+            const smallImageHeight = bigImage.outerHeight() * 0.05;  // Set dynamic height as 5% of bigImage height
+        
+            if (position === 'left') {
+                smallImage.css({
+                    width: `${bigImage.outerHeight()}px`,  // Use the height of the big image
+                    height: `${smallImageHeight}px`,  // Dynamic height, e.g., 5% of bigImage height
+                    top: `${bigImageTop}px`,
+                    left: `${bigImageLeft - 10}px`,
+                    transform: 'rotate(90deg)',
+                    transformOrigin: 'left top'
+                });
+            } else if (position === 'right') {
+                smallImage.css({
+                    width: `${bigImage.outerHeight()}px`,  // Use the height of the big image
+                    height: `${smallImageHeight}px`,  // Dynamic height
+                    top: `${bigImageTop}px`,
+                    left: `${bigImageRight + 20}px`,
+                    transform: 'rotate(90deg)',
+                    transformOrigin: 'left top'
+                });
+            } else if (position === 'top') {
+                smallImage.css({
+                    width: `${smallImageWidth}px`,  // Dynamic width as 30% of bigImage width
+                    height: `${smallImageHeight}px`,  // Dynamic height
+                    top: `${bigImageTop - smallImage.outerHeight() - 10}px`,
+                    left: '50%',
+                    transform: 'translateX(-50%)'
+                });
+            } else if (position === 'bottom') {
+                smallImage.css({
+                    width: `${smallImageWidth}px`,  // Dynamic width
+                    height: `${smallImageHeight}px`,  // Dynamic height
+                    top: `${bigImageBottom + 10}px`,
+                    left: '50%',
+                    transform: 'translateX(-50%)'
+                });
+            }
+        },        
+
         // Button click handlers for testing
         placeOnTop: function() {
-            console.log("Top button clicked");
-        },
-    
-        placeOnBottom: function() {
-            console.log("Bottom button clicked");
-        },
-    
-        placeOnLeft: function() {
-            console.log("Left button clicked");
             this.resetBarPosition();
-    
-            const bigImage = this.$('.img_panel'); // Ensure the correct image element
-
-            if (bigImage.length === 0) {
-                console.error("Error: .img_panel element not found");
-                return; // Exit the function if the element is not found
-            }
-
-            const imgTop = bigImage.offset().top; // Use offset() instead of position()
-            const imgLeft = bigImage.offset().left;
-
-            this.$('.calibration_bar').css({
-                top: `${imgTop}px`,
-                left: `${imgLeft - 10}px`, // Position to the left of the image
-                width: `${bigImage.height()}px`, // The width becomes the image's height to rotate
-                height: '10px',
-                transform: 'rotate(90deg)',
-                transformOrigin: 'left top'
-            });
+            this.moveImage('top', '.calibration_bar', '.imgContainer');  // Using jQuery selectors
         },
-    
+        
+        placeOnBottom: function() {
+            this.resetBarPosition();
+            this.moveImage('bottom', '.calibration_bar', '.imgContainer');
+        },
+        
+        placeOnLeft: function() {
+            this.resetBarPosition();
+            this.moveImage('left', '.calibration_bar', '.imgContainer');
+        },
+        
         placeOnRight: function() {
-            console.log("Right button clicked");
+            this.resetBarPosition();
+            this.moveImage('right', '.calibration_bar', '.imgContainer');
         },
+        
 
         resetBarPosition: function() {
             this.$('.calibration_bar').css({
