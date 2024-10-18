@@ -24,8 +24,11 @@
     import viewport_template from '../../templates/viewport.template.html?raw';
     import viewport_inner_template from '../../templates/viewport_inner.template.html?raw';
     import zoom_crop_template from '../../templates/zoom_crop.template.html?raw';
+    import calibration_bar_template from '../../templates/calibration_bar.template.html?raw';
+    import calibration_bar_control_template from '../../templates/calibration_bar_control.template.html?raw';
 
     import projectionIconUrl from '../../images/projection20.png';
+    import template from "underscore/cjs/template.js";
 
 
     var RightPanelView = Backbone.View.extend({
@@ -34,6 +37,10 @@
             // we render on selection Changes in the model
             this.listenTo(this.model, 'change:selection', this.render);
 
+            // Instantiate a separate calibration model for the CalibrationBarView
+            this.calibrationModel = new Backbone.Model({
+                color: 'ff0000',
+            });
             // this.render();
             new LabelsPanelView({model: this.model});
             new RoisFormView({model: this.model});
@@ -80,6 +87,14 @@
                 this.csv = new ChannelSliderView({models: selected});
                 $("#channel_sliders").empty().append(this.csv.render().el);
             }
+
+            if (selected.length > 0) {
+                var calibrationBarView = new CalibrationBarView({ model: this.calibrationModel });
+                
+                // Render the view and insert it into the container
+                $('#calibration_bar_container').html(calibrationBarView.render().el);
+            }
+            return this;
         }
     });
 
@@ -476,8 +491,83 @@
             return this;
         }
 
-    });
+    });    
+  
+    var CalibrationBarView = Backbone.View.extend({
+        template: _.template(calibration_bar_template), // Image template
+        calibControlTemplate: _.template(calibration_bar_control_template), // Buttons template
+        
+        initialize: function(opts) {
+            this.model = opts.model;
+            this.listenTo(this.model, 'change', this.render);
+        },
+    
+        // events: {
+        //     'click #calib_btn_top': 'placeOnTop',
+        //     'click #calib_btn_bottom': 'placeOnBottom',
+        //     'click #calib_btn_left': 'placeOnLeft',
+        //     'click #calib_btn_right': 'placeOnRight'
+        // },
 
+         // Functions to change image position based on button click
+        placeOnTop: function() {
+            console.log("Moving bar to top");
+        this.resetBarPosition();
+            this.$('.calibration_bar').css({ position: 'relative', top: '0', left: '50%', transform: 'translateX(-50%)' });
+        },
+        placeOnBottom: function() {
+            this.$('.calibration_bar').css({ position: 'relative', bottom: '0', left: '50%', transform: 'translateX(-50%)' });
+        },
+        placeOnLeft: function() {
+            this.$('.calibration_bar').css({ position: 'relative', left: '0', top: '50%', transform: 'translateY(-50%)' });
+        },
+        placeOnRight: function() {
+            this.$('.calibration_bar').css({ position: 'relative', right: '0', top: '50%', transform: 'translateY(-50%)' });
+        },
+        resetBarPosition: function() {
+            this.$('.calibration_bar').css({
+                top: '',
+                bottom: '',
+                left: '',
+                right: '',
+                transform: ''
+            });
+        },
+
+        renderImage: function() {
+            // Render the image template using the model data
+            var imageHtml = this.template(this.model.toJSON());
+            return imageHtml;
+        },
+    
+        render_calibration_control: function() {
+            // Render the buttons and append them to a different container
+            var buttonsHtml = this.calibControlTemplate();
+            $('#calibration_buttons_container').html(buttonsHtml); // Render buttons directly into the container
+             // Manually attach the events after rendering buttons
+
+            $('#calib_btn_top').on('click', this.placeOnTop.bind(this));
+            $('#calib_btn_bottom').on('click', this.placeOnBottom.bind(this));
+            $('#calib_btn_left').on('click', this.placeOnLeft.bind(this));
+            $('#calib_btn_right').on('click', this.placeOnRight.bind(this));
+        },
+
+        render: function() {
+            // Clear the view's element
+            this.$el.empty();
+    
+            // Render the image and append it to the view's element
+            var imageHtml = this.renderImage();
+            this.$el.append(imageHtml);
+    
+            // Render the buttons in a different location
+            this.render_calibration_control();
+    
+            return this;
+        },
+    });
+    
+    
 
     // Created new for each selection change
     var SelectedPanelsLabelsView = Backbone.View.extend({
