@@ -522,11 +522,45 @@
     
         placeOnLeft: function() {
             console.log("Left button clicked");
+            this.resetBarPosition();
+    
+            const bigImage = this.$('.img_panel'); // Ensure the correct image element
+
+            if (bigImage.length === 0) {
+                console.error("Error: .img_panel element not found");
+                return; // Exit the function if the element is not found
+            }
+
+            const imgTop = bigImage.offset().top; // Use offset() instead of position()
+            const imgLeft = bigImage.offset().left;
+
+            this.$('.calibration_bar').css({
+                top: `${imgTop}px`,
+                left: `${imgLeft - 10}px`, // Position to the left of the image
+                width: `${bigImage.height()}px`, // The width becomes the image's height to rotate
+                height: '10px',
+                transform: 'rotate(90deg)',
+                transformOrigin: 'left top'
+            });
         },
     
         placeOnRight: function() {
             console.log("Right button clicked");
         },
+
+        resetBarPosition: function() {
+            this.$('.calibration_bar').css({
+                top: '',
+                left: '',
+                bottom: '',
+                right: '',
+                width: '',
+                height: '',
+                transform: '',
+                transformOrigin: ''
+            });
+        },
+
         renderImage: function() {
             // Render the image template using the model data
             var imageHtml = this.template(this.model.toJSON());
@@ -535,7 +569,6 @@
         
         render_calibration_control: function() {
             var buttonsHtml = this.calibControlTemplate();
-            console.log(buttonsHtml);
             $('#calibration_control_container').html(buttonsHtml); // Render buttons inside the container
             this.attachEvents(); 
         },
