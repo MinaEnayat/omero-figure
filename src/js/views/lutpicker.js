@@ -23,6 +23,7 @@ import _ from 'underscore';
 import * as bootstrap from "bootstrap"
 
 import lut_picker_template from '../../templates/lut_picker.template.html?raw';
+import calibration_bar_template from '../../templates/calibration_bar.template.html?raw';
 import { showModal } from "./util";
 
 import lutsPng from "../../images/luts_10.png";

@@ -1,6 +1,31 @@
-<div id="calibration_control">
-  <button id="calib_btn_left" class=" btn btn-primary">Left</button>
-  <button id="calib_btn_right" class=" btn btn-primary">Right</button>
-  <button id="calib_btn_top" class=" btn btn-primary">Top</button>
-  <button id="calib_btn_bottom" class=" btn btn-primary">Bottom</button>
-</div>
+<form class="cali_styling_form">
+  <div class="row gy-2 gx-3 align-items-center" style="--bs-gutter-x: 0.3rem;">
+      <div class="col-auto input-group-sm">
+          <label class="col-form-label col-form-label-sm" style="">Calibration Bar Position</label>
+      </div>
+      <div class="col-auto form-group btn-group calibration_bar_unit">
+        <button type="button" class="label-color btn btn-outline-secondary btn-sm dropdown-toggle" 
+          title="Bar Position" data-bs-toggle="dropdown">
+            <i data-position="top" class="bi-box-arrow-up dropdown_icon"></i>
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a class="dropdown-item calib-btn" href="#" data-position="leftvert">
+                <i data-position="leftvert" class="bi-box-arrow-left dropdown_icon"></i> Left
+            </a></li>
+            <li><a class="dropdown-item calib-btn" href="#" data-position="top">
+                <i data-position="top" class="bi-box-arrow-up dropdown_icon"></i> Top
+            </a></li>
+            <li><a class="dropdown-item calib-btn" href="#" data-position="rightvert">
+                <i data-position="rightvert" class="bi-box-arrow-right dropdown_icon"></i> Right
+            </a></li>
+            <li><a class="dropdown-item calib-btn" href="#" data-position="bottom">
+                <i data-position="bottom" class="bi-box-arrow-down dropdown_icon"></i> Bottom
+            </a></li>
+        </ul>
+      </div>
+      <div class="col-auto input-group-sm calibration_bar_toggle" style="flex: 1 1 auto; padding-right: 0">
+        <button id="toggleBarBtn" type="button" class="btn btn-sm btn-success float-end">Hide Bar</button>
+      </div>
+  </div>
+</form>

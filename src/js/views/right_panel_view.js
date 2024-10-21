@@ -86,13 +86,91 @@
                 $("#channel_sliders").empty().append(this.csv.render().el);
             }
             if (selected.length > 0) {
+                // Render Calibration Bar Image
                 var calibrationBarView = new CalibrationBarView({ model: this.calibrationModel });
-                $('#calibration_bar_container').html(calibrationBarView.render().el); // Render into the container
+                $('#calibration_bar_container').html(calibrationBarView.renderImage());
+
+                // Render Calibration Control Buttons
+                var calibrationControlView = new CalibrationBarView({ model: this.calibrationModel });
+                $('.calibration_control_container').html(calibrationControlView.render_calibration_control());
+            } else {
+                $('#calibration_bar_container').empty();
+                $('.calibration_control_container').empty();
             }
             return this;
         }
     });
 
+    var CalibrationBarView = Backbone.View.extend({
+        template: _.template(calibration_bar_template),
+        calibControlTemplate: _.template(calibration_bar_control_template), // Buttons template
+        
+        initialize: function(opts) {
+            this.model = opts.model;
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'drag_resize', this.placeOnLeft);
+        },
+
+        attachEvents: function() {
+            // Attach event listeners directly to the buttons
+            $('.dropdown-item.calib-btn').on('click', this.updateCalibrationBarPosition.bind(this));
+            $('#toggleBarBtn').on('click', this.toggleCalibrationBar.bind(this));
+        },
+    
+        // Method to handle dropdown selection and change bar position
+        updateCalibrationBarPosition: function(event) {
+            event.preventDefault();
+            var position = $(event.currentTarget).attr('data-position');
+            
+            // Remove all position-related classes first
+            var barElement = $('.calibration_bar');
+            barElement.removeClass('calibration-bar-top calibration-bar-bottom calibration-bar-leftvert calibration-bar-rightvert');
+            
+            // Add the selected position class
+            if (position === 'top') {
+                barElement.addClass('calibration-bar-top');
+            } else if (position === 'bottom') {
+                barElement.addClass('calibration-bar-bottom');
+            } else if (position === 'leftvert') {
+                barElement.addClass('calibration-bar-leftvert');
+            } else if (position === 'rightvert') {
+                barElement.addClass('calibration-bar-rightvert');
+            }
+        },
+        
+        // Method to toggle visibility of the calibration bar
+        toggleCalibrationBar: function() {
+            var barElement = $('#calibration_bar_container');
+            if (barElement.hasClass('hidden')) {
+                barElement.removeClass('hidden');
+                $('#toggleBarBtn').text('Hide Bar');
+            } else {
+                barElement.addClass('hidden');
+                $('#toggleBarBtn').text('Show Bar');
+            }
+        },
+
+        renderImage: function() {
+        
+            var imageHtml = this.template(this.model.toJSON());
+            $('#calibration_bar_container').html(imageHtml);
+        },
+    
+        render_calibration_control: function() {
+        
+            var buttonsHtml = this.calibControlTemplate();
+            $('.calibration_control_container').html(buttonsHtml);
+            this.attachEvents(); 
+        },
+    
+        render: function() {
+            this.$el.empty();
+            this.renderImage();
+            this.render_calibration_control();
+            this.delegateEvents();
+            return this;
+        }
+    });
 
     var RoisFormView = Backbone.View.extend({
 
@@ -487,129 +565,6 @@
         }
 
     });    
-  
-    var CalibrationBarView = Backbone.View.extend({
-        template: _.template(calibration_bar_template),
-        calibControlTemplate: _.template(calibration_bar_control_template), // Buttons template
-        
-        initialize: function(opts) {
-            this.model = opts.model;
-            this.listenTo(this.model, 'change', this.render);
-            this.listenTo(this.model, 'drag_resize', this.placeOnLeft);
-        },
-    
-        // events: {
-        //     "click #calib_btn_top": "placeOnTop",
-        //     "click #calib_btn_bottom": "placeOnBottom",
-        //     "click #calib_btn_left": "placeOnLeft",
-        //     "click #calib_btn_right": "placeOnRight"
-        // },
-        attachEvents: function() {
-            // Attach event listeners directly to the buttons
-            $('#calib_btn_top').on('click', this.placeOnTop.bind(this));
-            $('#calib_btn_bottom').on('click', this.placeOnBottom.bind(this));
-            $('#calib_btn_left').on('click', this.placeOnLeft.bind(this));
-            $('#calib_btn_right').on('click', this.placeOnRight.bind(this));
-        },
-
-        // Button click handlers for testing
-        placeOnTop: function() {
-            this.resetBarPosition();            
-            const bigImage = $('.imgContainer');
-            const bigImageTop = bigImage.position().top;        
-            const smallImage = $('.calibration_bar');
-
-            smallImage.css({
-                top: `${bigImageTop - smallImage.outerHeight() - 10}px`,
-                left: '50%',
-                transform: 'translateX(-50%)'
-            });
-        },        
-    
-        placeOnBottom: function() {
-            this.resetBarPosition();            
-            const bigImage = $('.imgContainer');
-            const bigImageTop = bigImage.position().top;
-            const bigImageHeight = bigImage.height();
-            const bigImageBottom = bigImageTop + bigImageHeight;           
-        
-            const smallImage = $('.calibration_bar');
-            smallImage.css({
-                top: `${bigImageBottom + 10}px`,
-                left: '50%',
-                transform: 'translateX(-50%)'
-            });
-        
-        },
-    
-        placeOnLeft: function() {
-            this.resetBarPosition();  // Reset the bar's previous position first
-            const bigImage = $('.imgContainer');
-            const bigImageTop = bigImage.position().top;
-            const bigImageLeft = bigImage.position().left;
-    
-            const smallImage = $('.calibration_bar');
-            smallImage.css({
-                // width: `${bigImageHeight}px`,
-                top: `${bigImageTop}px`,
-                left: `${bigImageLeft - 10}px`,
-                transform: 'rotate(90deg)',
-                transformOrigin: 'left top',
-            });
-        },
-    
-        placeOnRight: function() {
-            this.resetBarPosition();  // Reset the bar's previous position first
-            const bigImage = $('.imgContainer');
-            const bigImageTop = bigImage.position().top;
-            const bigImageLeft = bigImage.position().left;
-            const bigImageRight = bigImageLeft + bigImage.width();
-
-            const smallImage = $('.calibration_bar');
-            smallImage.css({
-                // width: `${bigImageHeight}px`,
-                top: `${bigImageTop}px`,
-                left: `${bigImageRight + 30}px`,
-                transform: 'rotate(90deg)',
-                transformOrigin: 'left top',
-            });
-        },
-
-        resetBarPosition: function() {
-            this.$('.calibration_bar').css({
-                top: '',
-                left: '',
-                bottom: '',
-                right: '',
-                width: '',
-                height: '',
-                transform: '',
-                transformOrigin: ''
-            });
-        },
-
-        renderImage: function() {
-            // Render the image template using the model data
-            var imageHtml = this.template(this.model.toJSON());
-            return imageHtml;
-        },
-        
-        render_calibration_control: function() {
-            var buttonsHtml = this.calibControlTemplate();
-            $('#calibration_control_container').html(buttonsHtml); // Render buttons inside the container
-            this.attachEvents(); 
-        },
-
-        render: function() {
-            // Render the buttons into this view's element
-            this.$el.empty();
-            var imageHtml = this.renderImage();
-            this.$el.append(imageHtml);
-            this.render_calibration_control();
-            this.delegateEvents(); // Ensure events are bound after rendering
-            return this;
-        }
-    });
         
     // Created new for each selection change
     var SelectedPanelsLabelsView = Backbone.View.extend({
