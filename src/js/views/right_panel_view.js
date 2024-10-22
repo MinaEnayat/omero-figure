@@ -15,6 +15,7 @@
     import InfoPanelView from "./info_panel_view";
     import ChannelSliderView from "./channel_slider_view";
     import ScalebarFormView from "./scalebar_form_view";
+    import CalibFormView from "./calib_form_view";
     import ZtSlidersView from "./zt_sliders_view";
 
     import image_display_options_template from '../../templates/image_display_options.template.html?raw';
@@ -24,8 +25,6 @@
     import viewport_template from '../../templates/viewport.template.html?raw';
     import viewport_inner_template from '../../templates/viewport_inner.template.html?raw';
     import zoom_crop_template from '../../templates/zoom_crop.template.html?raw';
-    import calibration_bar_template from '../../templates/calibration_bar.template.html?raw';
-    import calibration_bar_control_template from '../../templates/calibration_bar_control.template.html?raw';
 
     import projectionIconUrl from '../../images/projection20.png';
     import template from "underscore/cjs/template.js";
@@ -36,9 +35,6 @@
         initialize: function(opts) {
             // we render on selection Changes in the model
             this.listenTo(this.model, 'change:selection', this.render);
-
-             // Instantiate a calibration model for the CalibrationBarView
-            this.calibrationModel = new Backbone.Model({ color: 'ff0000' });
 
             new LabelsPanelView({model: this.model});
             new RoisFormView({model: this.model});
@@ -85,89 +81,7 @@
                 this.csv = new ChannelSliderView({models: selected});
                 $("#channel_sliders").empty().append(this.csv.render().el);
             }
-            if (selected.length > 0) {
-                // Render Calibration Bar Image
-                var calibrationBarView = new CalibrationBarView({ model: this.calibrationModel });
-                $('#calibration_bar_container').html(calibrationBarView.renderImage());
-
-                // Render Calibration Control Buttons
-                var calibrationControlView = new CalibrationBarView({ model: this.calibrationModel });
-                $('.calibration_control_container').html(calibrationControlView.render_calibration_control());
-            } else {
-                $('#calibration_bar_container').empty();
-                $('.calibration_control_container').empty();
-            }
-            return this;
-        }
-    });
-
-    var CalibrationBarView = Backbone.View.extend({
-        template: _.template(calibration_bar_template),
-        calibControlTemplate: _.template(calibration_bar_control_template), // Buttons template
-        
-        initialize: function(opts) {
-            this.model = opts.model;
-            this.listenTo(this.model, 'change', this.render);
-            this.listenTo(this.model, 'drag_resize', this.placeOnLeft);
-        },
-
-        attachEvents: function() {
-            // Attach event listeners directly to the buttons
-            $('.dropdown-item.calib-btn').on('click', this.updateCalibrationBarPosition.bind(this));
-            $('#toggleBarBtn').on('click', this.toggleCalibrationBar.bind(this));
-        },
-    
-        // Method to handle dropdown selection and change bar position
-        updateCalibrationBarPosition: function(event) {
-            event.preventDefault();
-            var position = $(event.currentTarget).attr('data-position');
             
-            // Remove all position-related classes first
-            var barElement = $('.calibration_bar');
-            barElement.removeClass('calibration-bar-top calibration-bar-bottom calibration-bar-leftvert calibration-bar-rightvert');
-            
-            // Add the selected position class
-            if (position === 'top') {
-                barElement.addClass('calibration-bar-top');
-            } else if (position === 'bottom') {
-                barElement.addClass('calibration-bar-bottom');
-            } else if (position === 'leftvert') {
-                barElement.addClass('calibration-bar-leftvert');
-            } else if (position === 'rightvert') {
-                barElement.addClass('calibration-bar-rightvert');
-            }
-        },
-        
-        // Method to toggle visibility of the calibration bar
-        toggleCalibrationBar: function() {
-            var barElement = $('#calibration_bar_container');
-            if (barElement.hasClass('hidden')) {
-                barElement.removeClass('hidden');
-                $('#toggleBarBtn').text('Hide Bar');
-            } else {
-                barElement.addClass('hidden');
-                $('#toggleBarBtn').text('Show Bar');
-            }
-        },
-
-        renderImage: function() {
-        
-            var imageHtml = this.template(this.model.toJSON());
-            $('#calibration_bar_container').html(imageHtml);
-        },
-    
-        render_calibration_control: function() {
-        
-            var buttonsHtml = this.calibControlTemplate();
-            $('.calibration_control_container').html(buttonsHtml);
-            this.attachEvents(); 
-        },
-    
-        render: function() {
-            this.$el.empty();
-            this.renderImage();
-            this.render_calibration_control();
-            this.delegateEvents();
             return this;
         }
     });
@@ -384,6 +298,76 @@
         "bottom": "bi-box-arrow-down"
     }
 
+    // var CalibrationBarView = Backbone.View.extend({
+    //     template: _.template(calibration_bar_template),
+    //     calibControlTemplate: _.template(calibration_bar_control_template), // Buttons template
+        
+    //     initialize: function(opts) {
+    //         this.model = opts.model;
+    //         this.listenTo(this.model, 'change', this.render);
+    //         this.listenTo(this.model, 'drag_resize', this.placeOnLeft);
+    //     },
+
+    //     attachEvents: function() {
+    //         // Attach event listeners directly to the buttons
+    //         $('.dropdown-item.calib-btn').on('click', this.updateCalibrationBarPosition.bind(this));
+    //         $('#toggleBarBtn').on('click', this.toggleCalibrationBar.bind(this));
+    //     },
+    
+    //     // Method to handle dropdown selection and change bar position
+    //     updateCalibrationBarPosition: function(event) {
+    //         event.preventDefault();
+    //         var position = $(event.currentTarget).attr('data-position');
+            
+    //         // Remove all position-related classes first
+    //         var barElement = $('.calibration_bar');
+    //         barElement.removeClass('calibration-bar-top calibration-bar-bottom calibration-bar-leftvert calibration-bar-rightvert');
+            
+    //         // Add the selected position class
+    //         if (position === 'top') {
+    //             barElement.addClass('calibration-bar-top');
+    //         } else if (position === 'bottom') {
+    //             barElement.addClass('calibration-bar-bottom');
+    //         } else if (position === 'leftvert') {
+    //             barElement.addClass('calibration-bar-leftvert');
+    //         } else if (position === 'rightvert') {
+    //             barElement.addClass('calibration-bar-rightvert');
+    //         }
+    //     },
+        
+    //     // Method to toggle visibility of the calibration bar
+    //     toggleCalibrationBar: function() {
+    //         var barElement = $('#calibration_bar_container');
+    //         if (barElement.hasClass('hidden')) {
+    //             barElement.removeClass('hidden');
+    //             $('#toggleBarBtn').text('Hide Bar');
+    //         } else {
+    //             barElement.addClass('hidden');
+    //             $('#toggleBarBtn').text('Show Bar');
+    //         }
+    //     },
+
+    //     renderImage: function() {
+        
+    //         var imageHtml = this.template(this.model.toJSON());
+    //         $('#calibration_bar_container').html(imageHtml);
+    //     },
+    
+    //     render_calibration_control: function() {
+        
+    //         var buttonsHtml = this.calibControlTemplate();
+    //         $('.calibration_control_container').html(buttonsHtml);
+    //         this.attachEvents(); 
+    //     },
+    
+    //     render: function() {
+    //         this.$el.empty();
+    //         this.renderImage();
+    //         this.render_calibration_control();
+    //         this.delegateEvents();
+    //         return this;
+    //     }
+    // });
 
     var LabelsPanelView = Backbone.View.extend({
 
@@ -559,6 +543,18 @@
             }
             if (old_sb) {
                 old_sb.remove();
+            }
+
+            var old_cb = this.calib_form;
+            var $calib_form = $("#calib_form");
+
+            if (selected.length > 0) {
+                this.calib_form = new CalibFormView({models: selected});
+                this.calib_form.render();
+                $calib_form.empty().append(this.calib_form.$el);
+            }
+            if (old_cb) {
+                old_cb.remove();
             }
 
             return this;

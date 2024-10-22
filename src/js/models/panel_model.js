@@ -156,7 +156,22 @@
             // update only the attributes of scalebar we're passed
             var old_sb = $.extend(true, {}, this.get('scalebar') || {});
             var sb = $.extend(true, old_sb, new_sb);
+            console.log(sb);
             this.save('scalebar', sb);
+        },
+
+        hide_calib: function() {
+            // keep all calib properties, except 'show'
+            var cb = $.extend(true, {}, this.get('calib'));
+            cb.show = false;
+            this.save('calib', cb);
+        },
+
+        save_calib: function(new_cb) {
+            // update only the attributes of calib we're passed
+            var old_cb = $.extend(true, {}, this.get('calib') || {});
+            var cb = $.extend(true, old_cb, new_cb);
+            this.save('calib', cb);
         },
 
         // Simple checking whether shape is in viewport (x, y, width, height)
