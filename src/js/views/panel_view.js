@@ -12,6 +12,7 @@
     import label_right_vertical_template from '../../templates/labels/label_right_vertical.template.html?raw';
     import label_table_template from '../../templates/labels/label_table.template.html?raw';
     import scalebar_panel_template from '../../templates/scalebar_panel.template.html?raw';
+    import calib_panel_template from '../../templates/calib_panel.template.html?raw';
     
     // -------------------------Panel View -----------------------------------
     // A Panel is a <div>, added to the #paper by the FigureView below.
@@ -24,6 +25,7 @@
         label_right_vertical_template: _.template(label_right_vertical_template),
         label_table_template: _.template(label_table_template),
         scalebar_template: _.template(scalebar_panel_template),
+        calib_template: _.template(calib_panel_template),
 
 
         initialize: function(opts) {
@@ -33,6 +35,7 @@
                 'change:x change:y change:width change:height change:zoom change:dx change:dy change:rotation',
                 this.render_layout);
             this.listenTo(this.model, 'change:scalebar change:pixel_size_x', this.render_scalebar);
+            this.listenTo(this.model, 'change:calib', this.render_calib);
             this.listenTo(this.model,
                 'change:zoom change:dx change:dy change:width change:height change:channels change:theZ change:theT change:z_start change:z_end change:z_projection change:min_export_dpi',
                 this.render_image);
@@ -314,6 +317,27 @@
             this.render_layout();
         },
 
+        render_calib: function() {
+
+            if (this.$calib) {
+                this.$calib.remove();
+            }
+            var cb = this.model.get('calib');
+            if (cb && cb.show) {
+                var cb_json = {
+                    position: cb.position,
+                    show: cb.show
+                };
+
+                var cb_html = this.calib_template(cb_json);
+                this.$el.append(cb_html);
+            }
+            this.$calib = $(".calib", this.$el);
+
+            // update calib size wrt current sizes
+            this.render_layout();
+        },
+
         render: function() {
             // This render() is only called when the panel is first created
             // to set up the elements. It then calls other render methods to
@@ -334,6 +358,7 @@
             this.render_image();
             this.render_labels();
             this.render_scalebar();     // also calls render_layout()
+            this.render_calib(); 
 
             // At this point, element is not ready for Raphael svg
             // If we wait a short time, works fine

@@ -99,6 +99,12 @@ Optional settings for each panel::
         "font_size": "14"
     },
 
+    // show a calib
+    "calib": {
+        "show": true,
+        "position": "right",  // topright, topleft, bottomleft
+    },
+
     // Timestamps in seconds, 1 per T-index. Used for time-stamp labels and T-slider
     "deltaT": [
         -0.94, -0.61, -0.28, 0.05, 0.33, 0.65
