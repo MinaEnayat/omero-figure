@@ -1,11 +1,13 @@
 <div class="calib calib_<%= position %>" >
     <% if (show) { %>
-        <img src="/images/bar.png"  >
-
-        <!-- <input class="ch_start_slider"
-            type="range" style="
-                --bgPos: <%= lutBgPos %>;
-                --lutPng: url(/images/luts_10.png);
-                --scaleX: <%= reverse ? -1 : 1 %>"/> -->
+        <!-- <img src="/images/bar.png"  > -->
+        <p> <%= lutBgPos %>;</p>
+        <div  style="border:3px solid red;
+        height: 10px;
+                background-image: url('/images/luts_10.png');
+                background-position: <%= lutBgPos %>;                
+                transform: scaleX(<%= reverse ? -1 : 1 %>)
+                
+                width: 100%;"></div>
     <% } %>
 </div>

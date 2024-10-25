@@ -102,10 +102,9 @@ Optional settings for each panel::
     // show a calib
     "calib": {
         "show": true,
-        "position": "right",
-        "lutBgPos": 0,
-        "lutIndex": 0,
-        "lutName": "default.lut",
+        "position": "top",
+        "lutBgPos": "0px 100px",
+        "lutsPngUrl": "imgs/luts_image.png",
         "reverse": false,
       }, 
 

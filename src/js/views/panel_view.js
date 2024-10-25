@@ -328,8 +328,7 @@
                     position: cb.position,
                     show: cb.show,
                     lutBgPos: cb.lutBgPos || 0,  // Default to 0 if undefined
-                    lutIndex: cb.lutIndex || 0,  // Default to 0 if undefined
-                    lutName: cb.lutName || "default.lut",
+                    lutImg: cb.lutImg,
                     reverse: cb.reverse,
                 };
 

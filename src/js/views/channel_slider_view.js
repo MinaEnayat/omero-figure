@@ -327,6 +327,8 @@ var ChannelSliderView = Backbone.View.extend({
             // $(".ch_slider").slider("destroy");
             this.$el.empty();
 
+            var isFirstChannelSet = false;
+
             chData[0].forEach(function(d, chIdx) {
                 // For each channel, summarise all selected images:
                 // Make list of various channel attributes:
@@ -371,7 +373,15 @@ var ChannelSliderView = Backbone.View.extend({
                 // Make sure slider range is increased if needed to include current values
                 min = Math.min(min, startAvg);
                 max = Math.max(max, endAvg);
-
+                if (!isFirstChannelSet) {
+                    self.models.forEach(function(m, index) {
+                        if (index === 0) { // Ensure this runs only for the first channel
+                            m.set('lutBgPos', lutBgPos);
+                        }
+                    });
+                    isFirstChannelSet = true; // Mark the first channel as set
+                    console.log("first ", lutBgPos);
+                }
                 var sliderHtml = self.template({'idx': chIdx,
                                                 'label': label,
                                                 'startAvg': startAvg,
