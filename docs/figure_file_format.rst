@@ -102,8 +102,12 @@ Optional settings for each panel::
     // show a calib
     "calib": {
         "show": true,
-        "position": "right",  // topright, topleft, bottomleft
-    },
+        "position": "right",
+        "lutBgPos": 0,
+        "lutIndex": 0,
+        "lutName": "default.lut",
+        "reverse": false,
+      }, 
 
     // Timestamps in seconds, 1 per T-index. Used for time-stamp labels and T-slider
     "deltaT": [

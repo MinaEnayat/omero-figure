@@ -88,7 +88,11 @@
       },
       "calib": {
         "show": true,
-        "position": "right",        
+        "position": "right",
+        "lutBgPos": 0,
+        "lutIndex": 0,
+        "lutName": "default.lut",
+        "reverse": false,        
       },      
       "pixel_size_x_symbol": "µm",
       "pixel_size_x_unit": "MICROMETER"
@@ -250,7 +254,11 @@
       },
       "calib": {
         "show": true,
-        "position": "right",        
+        "position": "right",
+        "lutBgPos": 0,
+        "lutIndex": 0,
+        "lutName": "default.lut",
+        "reverse": false,        
       },      
       "pixel_size_x_symbol": "µm",
       "pixel_size_x_unit": "MICROMETER"
@@ -865,8 +873,12 @@
       },
       "calib": {
         "show": true,
-        "position": "right",        
-      },      
+        "position": "right",
+        "lutBgPos": 0,
+        "lutIndex": 0,
+        "lutName": "default.lut",
+        "reverse": false,        
+      },       
       "pixel_size_x_symbol": "µm",
       "pixel_size_x_unit": "MICROMETER",
       "shapes": [
@@ -1324,8 +1336,12 @@
       },
       "calib": {
         "show": true,
-        "position": "right",        
-      },      
+        "position": "right",
+        "lutBgPos": 0,
+        "lutIndex": 0,
+        "lutName": "default.lut",
+        "reverse": false,        
+      },       
       "pixel_size_x_symbol": "µm",
       "pixel_size_x_unit": "MICROMETER",
       "shapes": [
