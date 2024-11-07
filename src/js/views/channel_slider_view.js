@@ -373,14 +373,13 @@ var ChannelSliderView = Backbone.View.extend({
                 // Make sure slider range is increased if needed to include current values
                 min = Math.min(min, startAvg);
                 max = Math.max(max, endAvg);
-                if (!isFirstChannelSet) {
+                if (active && !isFirstChannelSet) {
                     self.models.forEach(function(m, index) {
                         if (index === 0) { // Ensure this runs only for the first channel
                             m.set('lutBgPos', lutBgPos);
                         }
                     });
                     isFirstChannelSet = true; // Mark the first channel as set
-                    console.log("first ", lutBgPos);
                 }
                 var sliderHtml = self.template({'idx': chIdx,
                                                 'label': label,
