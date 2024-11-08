@@ -18,7 +18,8 @@ var CalibFormView = Backbone.View.extend({
 
         var self = this;
         this.models.forEach(function(m) {
-            self.listenTo(m, 'change:calib change:lutBgPos', self.render);
+            self.listenTo(m, 'change:calib change:show', self.render);
+            self.listenTo(m, 'change:lutBgPos', self.updateBgPos);
         });
     },
 
@@ -27,7 +28,7 @@ var CalibFormView = Backbone.View.extend({
         "click .calib_label": "update_calib",
         "change .btn": "dropdown_btn_changed",
         "click .hide_calib": "hide_calib",
-        "click .pick_lut": "pickLut", 
+        "click .show_calib": "show_calib",
     },
 
     dropdown_btn_changed: function(event) {
@@ -55,26 +56,10 @@ var CalibFormView = Backbone.View.extend({
         return false;
     },
 
-    pickLut: function(event) {
-        // Use the FigureLutPicker to pick a LUT and update the preview
-        FigureLutPicker.show({
-            success: (pickedLut) => {
-                this.updateLutPreview(pickedLut);
-            }
-        });
-    },
-
-    updateLutPreview: function(lutName) {
-        var bgPos = FigureLutPicker.getLutBackgroundPosition(lutName);
-
-        this.models.forEach(function(m) {
-            m.set('lutBgPos', bgPos);
-        });
-
-        // Update the preview in the form
-        $(".lutPreview", this.el).css({
-            'background-position': bgPos,
-            'background-image': `url(${lutsPngUrl})`
+    updateBgPos: function() {
+        this.models.forEach((m) => {
+            var lutBgPos = m.get('lutBgPos');
+            $(".calibPreview").css({'background-position': lutBgPos});
         });
     },
 
@@ -107,6 +92,9 @@ var CalibFormView = Backbone.View.extend({
 
         var html = this.template(json);
         this.$el.html(html);
+        if(json.show){
+            this.updateBgPos();
+        }
         return this;
     }
 });

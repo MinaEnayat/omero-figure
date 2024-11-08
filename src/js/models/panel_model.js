@@ -165,6 +165,13 @@
             this.save('calib', cb);
         },
 
+        show_calib: function() {
+            var cb = $.extend(true, {}, this.get('calib'));
+            console.log(cb);
+            cb.show = true;
+            this.save('calib', cb);
+        },
+
         save_calib: function(new_cb) {
             // update only the attributes of calib we're passed
             var old_cb = $.extend(true, {}, this.get('calib') || {});
